@@ -1,0 +1,14 @@
+.description h1 {
+    text-transform: uppercase;
+    font-weight: 1000;
+    font-size: 47px;
+    color: #373b3f;
+}
+
+#landingpagecaption {
+    margin-top: 25%;
+}
+
+#landingpageimage {
+    margin-top: 25%;
+}

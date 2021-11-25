@@ -11,7 +11,6 @@ const initialState = {
     state: '',
     zipcode: '',
     mrn: '',
-    phonenumber: '',
     gender: '',
     password: '',
 }
@@ -49,9 +48,6 @@ const userSlice = createSlice({
         },
         setZipCode(state, action) {
             state.zipcode = action.payload
-        },
-        setPhoneNumber(state, action) {
-            state.phonenumber = action.payload
         },
         setGender(state, action) {
             state.gender = action.payload
