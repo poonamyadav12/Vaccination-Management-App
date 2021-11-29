@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import {createSlice} from '@reduxjs/toolkit'
+import {CreateUser} from "../services";
 
 const initialState = {
     email: '',
@@ -16,41 +17,17 @@ const initialState = {
 }
 
 const userSlice = createSlice({
-    name: 'userSlice',
+    name: 'user',
     initialState: initialState,
     reducers: {
-        setEmail(state, action) {
-            state.email = action.payload
-        },
-        setPassword(state, action) {
-            state.password = action.payload
-        },
-        setFirstName(state, action) {
-            state.firstname = action.payload
-        },
-        setMiddleName(state, action) {
-            state.middlename = action.payload
-        },
-        setLastName(state, action) {
-            state.lastname = action.payload
-        },
-        setDob(state, action) {
-            state.dob = action.payload
-        },
-        setStreetDetails(state, action) {
-            state.streetdetails = action.payload
-        },
-        setCity(state, action) {
-            state.city = action.payload
-        },
-        setState(state, action) {
-            state.state = action.payload
-        },
-        setZipCode(state, action) {
-            state.zipcode = action.payload
-        },
-        setGender(state, action) {
-            state.gender = action.payload
+        setUser(state, action) {
+            state.user = action.payload;
+        }
+    },
+    extraReducers: {
+        [CreateUser.fulfilled]: (state, action) => {
+            state.user = action.payload;
+            state.success = true;
         },
     }
 })
