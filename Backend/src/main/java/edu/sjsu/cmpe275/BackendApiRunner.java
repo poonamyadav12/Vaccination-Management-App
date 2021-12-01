@@ -1,6 +1,8 @@
 package edu.sjsu.cmpe275;
 
+import edu.sjsu.cmpe275.model.Disease;
 import edu.sjsu.cmpe275.model.User;
+import edu.sjsu.cmpe275.repository.DiseaseRepository;
 import edu.sjsu.cmpe275.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
