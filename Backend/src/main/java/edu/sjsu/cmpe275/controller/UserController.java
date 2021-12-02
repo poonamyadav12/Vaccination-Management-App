@@ -30,7 +30,7 @@ public class UserController {
         return Error.badRequest(HttpStatus.NOT_FOUND, "Sorry, the requested passenger with ID %s does not exist", id);
     }
 
-    @PostMapping(value = "/user", produces = {"application/json"})
+    @PostMapping(value = "/user/create", produces = {"application/json"})
     @Transactional
     public ResponseEntity<?> createUser(@RequestBody User user) throws ParseException {
         User passenger1 = userRepository.save(user);
