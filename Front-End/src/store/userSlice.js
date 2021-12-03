@@ -13,6 +13,9 @@ const userSlice = createSlice({
             state.error = action.payload;
             state.isSuccess = false;
         },
+        setIsSuccess(state, action) {
+            state.isSuccess = action.payload;
+        },
     },
     extraReducers: {
         [CreateUser.fulfilled]: (state, action) => {

@@ -12,6 +12,7 @@ import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {userSliceActions} from "../../store/userSlice";
 import {useNavigate} from "react-router-dom";
+import {formatMMddYYYY} from "../../common/datehelper";
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -31,6 +32,7 @@ const Signup = () => {
     useEffect(() => {
         if (isSuccess) {
             toast.success('Signup success', {position: "top-left", closeOnClick: true, delay: 1});
+            dispatch(userSliceActions.setIsSuccess(false));
             setTimeout(() => {
                 navigate('/')
             }, 2000)
@@ -42,7 +44,7 @@ const Signup = () => {
         firstname: '',
         middlename: '',
         lastname: '',
-        dateOfBirth: new Date().toLocaleDateString("en-US").replace(/\//g, '-'),
+        dateOfBirth: formatMMddYYYY(new Date()),
         address: {},
         gender: '',
         password: '',
@@ -67,8 +69,7 @@ const Signup = () => {
     }
 
     const onChangeDob = (date) => {
-        // Convert to YYYY-mm-DD format.
-        setUser({...user, dateOfBirth: date.toLocaleDateString("en-US").replace(/\//g, '-')});
+        setUser({...user, dateOfBirth: formatMMddYYYY(date)});
     }
 
     const onChangeStreetDetails = (e) => {
@@ -120,11 +121,13 @@ const Signup = () => {
                                     <h1>Sign Up</h1>
                                     <p>Enter your details to create an account</p>
                                     <Form.Group className="signupbox" controlId="formFirstName">
-                                        <Form.Control type="text" name="firstname" placeholder="Enter Your First Name"
+                                        <Form.Control type="text" name="firstname"
+                                                      placeholder="Enter Your First Name"
                                                       onChange={onChangeFirstName} required/>
                                     </Form.Group>
                                     <Form.Group className="signupbox" controlId="formMiddleName">
-                                        <Form.Control type="text" name="middlename" placeholder="Enter Your Middle Name"
+                                        <Form.Control type="text" name="middlename"
+                                                      placeholder="Enter Your Middle Name"
                                                       onChange={onChangeMiddleName}/>
                                     </Form.Group>
                                     <Form.Group className="signupbox" controlId="formLastName">
@@ -160,7 +163,8 @@ const Signup = () => {
                                                       onChange={onChangeZipCode} required/>
                                     </Form.Group>
                                     <Form.Group className="signupbox" controlId="formGender">
-                                        <Form.Control type="text" name="gender" onChange={onChangeGender} as="select"
+                                        <Form.Control type="text" name="gender" onChange={onChangeGender}
+                                                      as="select"
                                                       required>
                                             <option hidden value="Choose Your Gender">Choose Gender</option>
                                             <option value="Male">Male</option>
@@ -173,7 +177,8 @@ const Signup = () => {
                                                       onChange={onChangeEmail} required/>
                                     </Form.Group>
                                     <Form.Group className="signupbox" controlId="formPassword">
-                                        <Form.Control type="password" name="password" placeholder="Enter Your Password"
+                                        <Form.Control type="password" name="password"
+                                                      placeholder="Enter Your Password"
                                                       pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                                                       onChange={onChangePassword} required/>
                                     </Form.Group>
