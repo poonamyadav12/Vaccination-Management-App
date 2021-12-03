@@ -1,35 +1,29 @@
 import {createSlice} from '@reduxjs/toolkit'
 import {CreateUser} from "../services";
 
-const initialState = {
-    email: '',
-    firstname: '',
-    middlename: '',
-    lastname: '',
-    dob: new Date().toISOString(),
-    streetdetails: '',
-    city: '',
-    state: '',
-    zipcode: '',
-    mrn: '',
-    gender: '',
-    password: '',
-}
-
 const userSlice = createSlice({
     name: 'user',
-    initialState: initialState,
+    initialState: {},
     reducers: {
         setUser(state, action) {
             state.user = action.payload;
-        }
+            state.isSuccess = true;
+        },
+        setError(state, action) {
+            state.error = action.payload;
+            state.isSuccess = false;
+        },
     },
     extraReducers: {
         [CreateUser.fulfilled]: (state, action) => {
             state.user = action.payload;
-            state.success = true;
+            state.isSuccess = true;
+        },
+        [CreateUser.rejected]: (state, action) => {
+            state.error = action.payload;
         },
     }
+
 })
 
 export const userSliceActions = userSlice.actions;

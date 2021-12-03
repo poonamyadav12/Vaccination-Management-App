@@ -3,21 +3,46 @@ import {
 } from 'react-bootstrap';
 import DatePicker from "react-datepicker";
 import Navigationbar from '../Navigationbar/Navigationbar';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import './Signup.css'
 import "react-datepicker/dist/react-datepicker.css";
 import {CreateUser} from "../../services";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {ToastContainer, toast} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {userSliceActions} from "../../store/userSlice";
+import {useNavigate} from "react-router-dom";
 
 const Signup = () => {
+    const navigate = useNavigate();
+
     const dispatch = useDispatch();
+
+    const error = useSelector(state => state.userSlice.error);
+
+    const isSuccess = useSelector(state => state.userSlice.isSuccess);
+
+    useEffect(() => {
+        if (error) {
+            toast.error(error, {position: "top-left", closeOnClick: true});
+        }
+    }, [error]);
+
+    useEffect(() => {
+        if (isSuccess) {
+            toast.success('Signup success', {position: "top-left", closeOnClick: true, delay: 1});
+            setTimeout(() => {
+                navigate('/')
+            }, 2000)
+        }
+    }, [isSuccess]);
 
     const [user, setUser] = useState({
         email: '',
         firstname: '',
         middlename: '',
         lastname: '',
-        dateOfBirth: new Date().toISOString(),
+        dateOfBirth: new Date().toLocaleDateString("en-US").replace(/\//g, '-'),
         address: {},
         gender: '',
         password: '',
@@ -26,6 +51,7 @@ const Signup = () => {
     const onSubmit = (e) => {
         e.preventDefault();
         dispatch(CreateUser(user));
+        dispatch(userSliceActions.setError(''));
     };
 
     const onChangeFirstName = (e) => {
@@ -75,7 +101,9 @@ const Signup = () => {
 
     return (
         <div>
+            {/*{isSuccess ? <Navigate to={"/"}/> : null}*/}
             <Navigationbar/>
+            <ToastContainer/>
             <div className="container">
                 <Container>
                     <div>

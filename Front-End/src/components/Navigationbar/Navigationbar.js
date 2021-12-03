@@ -26,7 +26,15 @@ class Navigationbar extends Component {
                         pathname: '/signup',
                     }}
                 ><Button className="mr-sm-2 navbarbuttons">Sign Up
-                        </Button></Link>
+                </Button></Link>
+
+                <Link
+                    id="addNewClinic"
+                    to={{
+                        pathname: '/clinic',
+                    }}
+                ><Button className="mr-sm-2 navbarbuttons">Add New Clinic
+                </Button></Link>
             </Nav>
         );
 
