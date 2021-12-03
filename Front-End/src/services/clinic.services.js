@@ -1,9 +1,8 @@
-import axios from "axios";
-import {createAsyncThunk} from "@reduxjs/toolkit";
+import {createPostThunk} from "./thunkhelper";
 
 const BASE_URL = "http://localhost:8080";
 
-export const CreateClinic = createAsyncThunk(
+export const CreateClinic = createPostThunk(
     "clinic/create",
-    async (clinic) => (await axios.post(`${BASE_URL}/clinic/create`, clinic)).data
+    `/clinic/create`
 );
