@@ -4,14 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.util.Date;
 
 @Entity
 public class User {
@@ -21,7 +17,7 @@ public class User {
     private String medicalRecordNumber;
     @NotBlank(message = "Please enter email")
     @Email(message = "Please enter a valid email")
-    @Unique
+    @Column(unique = true)
     private String email;
     @NotBlank(message = "Please Enter First Name")
     private String firstname;

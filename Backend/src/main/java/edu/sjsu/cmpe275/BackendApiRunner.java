@@ -34,7 +34,7 @@ public class BackendApiRunner {
             //String reservationNumber, String origin, String destination, int price
 
             // fetch all customers
-            log.info("Passengers found with findAll():");
+            log.info("Users found with findAll():");
             log.info("-------------------------------");
             for (User customer : repository.findAll()) {
 //                repository.delete(customer);
