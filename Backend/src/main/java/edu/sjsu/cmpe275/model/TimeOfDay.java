@@ -7,7 +7,7 @@ import java.util.Objects;
 @Embeddable
 public class TimeOfDay implements Serializable {
     int hour;
-    int minute = 0;
+    int minute;
 
     public TimeOfDay() {
 

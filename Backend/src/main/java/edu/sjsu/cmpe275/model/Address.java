@@ -8,8 +8,6 @@ import javax.validation.constraints.NotBlank;
 public class Address {
     @Column
     private String street;
-    @Column
-    private String number;
     @NotBlank(message = "City is required")
     private String city;
     @NotBlank(message = "State is required")
@@ -25,7 +23,6 @@ public class Address {
     public String toString() {
         return "Address{" +
                 "street='" + street + '\'' +
-                ", number='" + number + '\'' +
                 ", city='" + city + '\'' +
                 ", state='" + state + '\'' +
                 ", zipCode='" + zipCode + '\'' +
@@ -35,7 +32,6 @@ public class Address {
     public Address(String street, String number, String city, String state, String zipCode) {
         super();
         this.street = street;
-        this.number = number;
         this.city = city;
         this.state = state;
         this.zipCode = zipCode;
@@ -47,14 +43,6 @@ public class Address {
 
     public void setStreet(String street) {
         this.street = street;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
     }
 
     public String getCity() {

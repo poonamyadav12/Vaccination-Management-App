@@ -19,8 +19,8 @@ public class ClinicController {
 
     @PostMapping(value = "/clinic/create", produces = {"application/json"})
     @Transactional
-    public ResponseEntity<?> createClinic(@RequestBody Clinic user) throws ParseException {
-        Clinic clinic = clinicRepository.save(user);
-        return ResponseEntity.ok(clinic);
+    public ResponseEntity<?> createClinic(@RequestBody Clinic clinic) throws ParseException {
+        Clinic clinicResponse = clinicRepository.save(clinic);
+        return ResponseEntity.ok(clinicResponse);
     }
 }
