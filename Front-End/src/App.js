@@ -1,5 +1,6 @@
 import React, {Suspense} from 'react'
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Route, Routes} from 'react-router-dom';
 import Clinic from "./components/Clinic/Clinic";

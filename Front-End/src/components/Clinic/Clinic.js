@@ -1,40 +1,89 @@
 import {
-    Form, Button, Container, Col, Row, Figure, Dropdown
+    Form, Button, Container, Col, Row, Figure
 } from 'react-bootstrap';
 import Navigationbar from '../Navigationbar/Navigationbar';
-import {useDispatch} from 'react-redux';
-import {userSliceActions} from '../../store/userSlice';
+import {useDispatch, useSelector} from 'react-redux';
 import TimeSelect from "react-time-select";
 import './Clinic.css'
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {CreateClinic} from "../../services";
+import {clinicSliceActions} from "../../store/clinicSlice";
+import {toast, ToastContainer} from "react-toastify";
+import {userSliceActions} from "../../store/userSlice";
 
 const Clinic = () => {
     const dispatch = useDispatch();
+
+    const error = useSelector(state => state.clinicSlice.error);
+
+    const isSuccess = useSelector(state => state.clinicSlice.isSuccess);
+
+    useEffect(() => {
+        if (error) {
+            toast.error(error, {position: "top-left", closeOnClick: true});
+        }
+    }, [error]);
+
+    useEffect(() => {
+        if (isSuccess) {
+            toast.success('Clinic added successfully', {position: "top-left", closeOnClick: true, delay: 1});
+            dispatch(clinicSliceActions.setIsSuccess(false));
+        }
+    }, [isSuccess]);
+
     const [clinic, setClinic] = useState({
-        clinicName: '',
+        name: '',
         numberOfPhysicians: '',
-        openTime: '',
-        closeTime: '',
-        address: {},
+        openTime: {},
+        closeTime: {},
+        address: {
+            street: "544 E El Camino",
+            city: "Santa Clara",
+            state: "CA",
+            zipCode: "95045",
+        },
     });
 
     const onChangeClinicName = (e) => {
-        dispatch(userSliceActions.setEmail(e.target.value));
+        setClinic({...clinic, name: e.target.value});
     }
 
     const onChangeNumberOfPhysicians = (e) => {
-        dispatch(userSliceActions.setPassword(e.target.value));
+        setClinic({...clinic, numberOfPhysicians: e.target.value});
     }
 
     const onOpenTimeChange = (e) => {
-        dispatch(userSliceActions.setPassword(e.target.value));
+        setClinic({...clinic, openTime: {...clinic.openTime, hour: parseInt(e.hours),minute:parseInt(e.minutes)}});
     }
     const onCloseTimeChange = (e) => {
-        dispatch(userSliceActions.setPassword(e.target.value));
+        setClinic({...clinic, closeTime: {...clinic.closeTime, hour: parseInt(e.hours),minute:parseInt(e.minutes)}});
     }
+    const onChangeStreetDetails = (e) => {
+        setClinic({...clinic, address: {...clinic.address, street: e.target.value}});
+    }
+
+    const onChangeCity = (e) => {
+        setClinic({...clinic, address: {...clinic.address, city: e.target.value}});
+    }
+
+    const onChangeState = (e) => {
+        setClinic({...clinic, address: {...clinic.address, state: e.target.value}});
+    }
+
+    const onChangeZipCode = (e) => {
+        setClinic({...clinic, address: {...clinic.address, zipCode: e.target.value}});
+    }
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        dispatch(CreateClinic(clinic));
+        dispatch(clinicSliceActions.setError(''));
+    };
+
     return (
         <div>
             <Navigationbar/>
+            <ToastContainer/>
             <div className="container">
                 <Container>
                     <div>
@@ -47,14 +96,15 @@ const Clinic = () => {
                                 </div>
                             </Col>
                             <Col>
-                                <Form id="login-form" method="post">
-                                    <h1>Add New Clinic</h1>
-                                    <p>Enter details to add new clinic</p>
+                                <Form id="login-form" onSubmit={onSubmit}>
+                                    <h1>+ New Clinic</h1>
                                     <Form.Group className="loginbox" controlId="formEmail">
+                                        <Form.Label>Enter Clinic name</Form.Label>
                                         <Form.Control type="text" name="name" placeholder="Enter Clinic Name"
                                                       onChange={onChangeClinicName} required/>
                                     </Form.Group>
                                     <Form.Group className="loginbox" controlId="formPassword">
+                                        <Form.Label>Enter Number Of Physicians</Form.Label>
                                         <Form.Control type="text" name="numberOfPhysicians"
                                                       placeholder="Enter Number Of Physicians"
                                                       onChange={onChangeNumberOfPhysicians} required/>
@@ -73,6 +123,29 @@ const Clinic = () => {
                                             </Form.Group>
                                         </Col>
                                     </Row>
+                                    <Form.Group className="loginbox" controlId="formStreetDetails">
+                                        <Form.Label>Enter Your Street Details</Form.Label>
+                                        <Form.Control type="text" name="streetdetails"
+                                                      placeholder="Enter Your Street Details"
+                                                      onChange={onChangeStreetDetails} required
+                                                      defaultValue={clinic.address.street}/>
+                                    </Form.Group>
+                                    <Form.Group className="loginbox" controlId="formCity">
+                                        <Form.Label>Enter Your Street Details</Form.Label>
+                                        <Form.Control type="text" name="city" placeholder="Enter Your City"
+                                                      onChange={onChangeCity} required
+                                                      defaultValue={clinic.address.city}/>
+                                    </Form.Group>
+                                    <Form.Group className="loginbox" controlId="formState">
+                                        <Form.Label>Enter Your Street Details</Form.Label>
+                                        <Form.Control type="text" name="state" placeholder="Enter Your State"
+                                                      onChange={onChangeState} required defaultValue={clinic.address.state}/>
+                                    </Form.Group>
+                                    <Form.Group className="loginbox" controlId="formZipCode">
+                                        <Form.Label>Enter Your Street Details</Form.Label>
+                                        <Form.Control type="text" name="zipcode" placeholder="Enter Your Zip Code"
+                                                      onChange={onChangeZipCode} required defaultValue={clinic.address.zipCode}/>
+                                    </Form.Group>
                                     <br/>
                                     <Button id="loginbutton" type="submit">
                                         Submit
