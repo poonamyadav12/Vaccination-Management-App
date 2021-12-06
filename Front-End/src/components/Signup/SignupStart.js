@@ -11,11 +11,6 @@ import {useFirebase} from "react-redux-firebase";
 import {GoogleAuthProvider} from "firebase/auth";
 import {useNavigate} from "react-router-dom";
 
-const SignupMode = Object.freeze({
-    GOOGLE: "google",
-    EMAIL: "email",
-});
-
 const provider = new GoogleAuthProvider();
 
 const SignupStart = () => {
