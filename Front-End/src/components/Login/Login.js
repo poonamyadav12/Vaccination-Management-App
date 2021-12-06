@@ -24,9 +24,6 @@ const Login = () => {
 
     const navigate = useNavigate();
 
-    // const [user, loading, error] = useAuthState(auth);
-    //const history = useHistory();
-
     const dispatch = useDispatch();
 
     useEffect(() => {
