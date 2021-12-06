@@ -1,32 +1,36 @@
-import React, { Component } from 'react';
+import React, {Component, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import './Navigationbar.css'
 import {
     Navbar, Nav, Button,
 } from 'react-bootstrap';
+import {useSelector} from "react-redux";
+import {toast} from "react-toastify";
+import {userSliceActions} from "../../store/userSlice";
+import {render} from "react-dom";
 
-class Navigationbar extends Component {
-    render() {
+const Navigationbar = () => {
+    const user = useSelector(state => state.userSlice.user);
+    console.log("User here",user);
+
         let navLogin = null
 
         navLogin = (
             <Nav className="ml-auto">
-
-                <Link
+                {!user && (<Link
                     id="loginLink"
-                    to={{
-                        pathname: '/login',
-                    }}
-                ><Button className="mr-sm-2 navbarbuttons">Login
-                        </Button></Link>
-
-                <Link
-                    id="signUpLink"
                     to={{
                         pathname: '/signup',
                     }}
                 ><Button className="mr-sm-2 navbarbuttons">Sign Up
-                </Button></Link>
+                        </Button></Link>)}
+                {!user? (<Link
+                    id="signUpLink"
+                    to={{
+                        pathname: '/login',
+                    }}
+                ><Button className="mr-sm-2 navbarbuttons">Login
+                </Button></Link>) : (
 
                 <Link
                     id="addNewClinic"
@@ -34,7 +38,7 @@ class Navigationbar extends Component {
                         pathname: '/clinic',
                     }}
                 ><Button className="mr-sm-2 navbarbuttons">Add New Clinic
-                </Button></Link>
+                </Button></Link>)}
             </Nav>
         );
 
@@ -67,7 +71,6 @@ class Navigationbar extends Component {
                 </Navbar>
             </div>
         );
-    }
 }
 
 

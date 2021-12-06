@@ -17,9 +17,6 @@ import {useFirebase} from "react-redux-firebase";
 
 const Signup = () => {
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const isConfirmingEmail = urlParams.get('confirm_email');
-
     const firebase = useFirebase();
 
     const navigate = useNavigate();
@@ -29,6 +26,10 @@ const Signup = () => {
     const error = useSelector(state => state.userSlice.error);
 
     const isSuccess = useSelector(state => state.userSlice.isSuccess);
+
+    useEffect(()=>{
+        dispatch(userSliceActions.setError(''));
+    },[])
 
     useEffect(() => {
         if (error) {
