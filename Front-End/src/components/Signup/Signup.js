@@ -13,8 +13,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import {userSliceActions} from "../../store/userSlice";
 import {useNavigate} from "react-router-dom";
 import {formatMMddYYYY} from "../../common/datehelper";
+import {useFirebase} from "react-redux-firebase";
 
 const Signup = () => {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const isConfirmingEmail = urlParams.get('confirm_email');
+
+    const firebase = useFirebase();
+
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
@@ -39,11 +46,12 @@ const Signup = () => {
         }
     }, [isSuccess]);
 
+    const names = firebase.auth().currentUser?.displayName?.split(" ");
     const [user, setUser] = useState({
-        email: '',
-        firstname: '',
-        middlename: '',
-        lastname: '',
+        email: firebase.auth().currentUser?.email,
+        firstname: names?.[0],
+        middlename: names?.slice(1, -1)?.join(' '),
+        lastname: names?.[names.length - 1],
         dateOfBirth: formatMMddYYYY(new Date()),
         address: {},
         gender: '',
@@ -100,6 +108,10 @@ const Signup = () => {
         setUser({...user, password: e.target.value});
     }
 
+    // firebase.auth().currentUser.getIdToken(!!isConfirmingEmail).then(() => {
+    //     // Refreshed Token
+    // })
+
     return (
         <div>
             {/*{isSuccess ? <Navigate to={"/"}/> : null}*/}
@@ -118,20 +130,23 @@ const Signup = () => {
                             </Col>
                             <Col>
                                 <Form id="signup-form" onSubmit={onSubmit}>
-                                    <h1>Sign Up</h1>
+                                    <h1>Complete your sign up</h1>
                                     <p>Enter your details to create an account</p>
                                     <Form.Group className="signupbox" controlId="formFirstName">
                                         <Form.Control type="text" name="firstname"
+                                                      value={user.firstname}
                                                       placeholder="Enter Your First Name"
                                                       onChange={onChangeFirstName} required/>
                                     </Form.Group>
                                     <Form.Group className="signupbox" controlId="formMiddleName">
                                         <Form.Control type="text" name="middlename"
                                                       placeholder="Enter Your Middle Name"
+                                                      value={user.middlename}
                                                       onChange={onChangeMiddleName}/>
                                     </Form.Group>
                                     <Form.Group className="signupbox" controlId="formLastName">
                                         <Form.Control type="text" name="lastname" placeholder="Enter Your Last Name"
+                                                      value={user.lastname}
                                                       onChange={onChangeLastName} required/>
                                     </Form.Group>
                                     <Form.Group className="signupbox" controlId="formDob">
@@ -148,6 +163,7 @@ const Signup = () => {
                                     <Form.Group className="signupbox" controlId="formStreetDetails">
                                         <Form.Control type="text" name="streetdetails"
                                                       placeholder="Enter Your Street Details"
+                                                      value={user.address.street}
                                                       onChange={onChangeStreetDetails} required/>
                                     </Form.Group>
                                     <Form.Group className="signupbox" controlId="formCity">
@@ -174,13 +190,9 @@ const Signup = () => {
                                     <Form.Group className="signupbox" controlId="formEmail">
                                         <Form.Control type="email" name="email" placeholder="Enter Your Email"
                                                       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                                                      onChange={onChangeEmail} required/>
-                                    </Form.Group>
-                                    <Form.Group className="signupbox" controlId="formPassword">
-                                        <Form.Control type="password" name="password"
-                                                      placeholder="Enter Your Password"
-                                                      pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                                                      onChange={onChangePassword} required/>
+                                                      value={user.email}
+                                                      onChange={onChangeEmail} required
+                                                      disabled={true}/>
                                     </Form.Group>
                                     <br/>
                                     <small>
