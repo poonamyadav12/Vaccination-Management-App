@@ -17,14 +17,26 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping(value = "/user/{id}", produces = {"application/json"})
-    public ResponseEntity<?> getPassengerById(@PathVariable("id") String id) {
-        Optional<User> passengerOptional = userRepository.findById(id);
-        if (passengerOptional.isPresent()) {
-            return ResponseEntity.of(passengerOptional);
+    //Fetch user details using the ID(MRN)
+    /*@GetMapping(value = "/user/{id}", produces = {"application/json"})
+    public ResponseEntity<?> getUserById(@PathVariable("id") String id) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            return ResponseEntity.of(userOptional);
         }
 
-        return Error.badRequest(HttpStatus.NOT_FOUND, "Sorry, the requested passenger with ID %s does not exist", id);
+        return Error.badRequest(HttpStatus.NOT_FOUND, "Sorry, the requested User with ID %s does not exist", id);
+    }*/
+
+    //Fetch user details using email
+    @GetMapping(value = "/user/{email}", produces = {"application/json"})
+    public ResponseEntity<?> getUserByEmail(@PathVariable("email") String email) {
+        Optional<User> userOptional = userRepository.findUserByEmail(email);
+        if (userOptional.isPresent()) {
+            return ResponseEntity.of(userOptional);
+        }
+
+        return Error.badRequest(HttpStatus.NOT_FOUND, "Sorry, the requested User with email %s does not exist", email);
     }
 
     @PostMapping(value = "/user", produces = {"application/json"})
