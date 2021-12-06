@@ -9,7 +9,6 @@ import {useEffect, useState} from "react";
 import {CreateClinic} from "../../services";
 import {clinicSliceActions} from "../../store/clinicSlice";
 import {toast, ToastContainer} from "react-toastify";
-import {userSliceActions} from "../../store/userSlice";
 
 const Clinic = () => {
     const dispatch = useDispatch();
