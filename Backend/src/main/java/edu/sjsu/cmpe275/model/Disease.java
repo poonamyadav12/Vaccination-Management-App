@@ -1,12 +1,16 @@
 package edu.sjsu.cmpe275.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Disease {
@@ -21,13 +25,18 @@ public class Disease {
 
     private String description;
 
-    public Disease(String diseaseId, String name, String description) {
+    @JsonIgnore
+    @ManyToMany(mappedBy = "diseases")
+    private Set<Vaccine> vaccines;
+
+    public Disease() {
+    }
+
+    public Disease(String diseaseId, @Unique String name, String description, Set<Vaccine> vaccines) {
         this.diseaseId = diseaseId;
         this.name = name;
         this.description = description;
-    }
-
-    public Disease() {
+        this.vaccines = vaccines;
     }
 
     public String getName() {
@@ -54,12 +63,21 @@ public class Disease {
         this.description = description;
     }
 
+    public Set<Vaccine> getVaccines() {
+        return vaccines;
+    }
+
+    public void setVaccines(Set<Vaccine> vaccines) {
+        this.vaccines = vaccines;
+    }
+
     @Override
     public String toString() {
         return "Disease{" +
-                "name='" + name + '\'' +
-                ", diseaseId='" + diseaseId + '\'' +
+                "diseaseId='" + diseaseId + '\'' +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", vaccines=" + vaccines +
                 '}';
     }
 }
