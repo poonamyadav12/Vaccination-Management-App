@@ -1,5 +1,6 @@
 package edu.sjsu.cmpe275;
 
+import edu.sjsu.cmpe275.model.Address;
 import edu.sjsu.cmpe275.model.Clinic;
 import edu.sjsu.cmpe275.model.User;
 import edu.sjsu.cmpe275.repository.ClinicRepository;
@@ -23,7 +24,9 @@ public class BackendApiRunner {
     public CommandLineRunner demo(UserRepository repository) {
         return (args) -> {
             // save a few user
-            //repository.save(new User("poonam.yadav@sjsu.edu", "Bauer", "hkoj", "daisy"));
+//            repository.save(new User("ujjwal.jain@sjsu.edu", "ujjwal", "","jain", "12-10-1998", "male", new Address("xyz","","San Jose","CA","95121")));
+//            repository.save(new User("poonam.yadav@sjsu.edu", "poonam", "","yadav", "12-07-2021", "female", new Address("abc","","San Jose","CA","95109")));
+//            repository.save(new User("shubham.dutta@sjsu.edu", "Shubham", "","Dutta", "01-01-1996", "male", new Address("xyz","","San Jose","CA","95121")));
 //            repository.save(new Passenger("Chloe", "O'Brian"));
 //            repository.save(new Passenger("Kim", "Bauer"));
 //            repository.save(new Passenger("David", "Palmer"));

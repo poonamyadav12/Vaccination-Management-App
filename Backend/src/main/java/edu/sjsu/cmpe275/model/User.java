@@ -12,9 +12,9 @@ import javax.validation.constraints.Pattern;
 @Entity
 public class User {
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    private String medicalRecordNumber;
+    @SequenceGenerator(name = "MRNGenerator", sequenceName= "MRNSequence", initialValue = 100, allocationSize = 10)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MRNGenerator")
+    private int medicalRecordNumber;
     @NotBlank(message = "Please enter email")
     @Email(message = "Please enter a valid email")
     @Column(unique = true)
@@ -88,7 +88,7 @@ public class User {
         return dateOfBirth;
     }
 
-    public String getMedicalRecordNumber() {
+    public int getMedicalRecordNumber() {
         return medicalRecordNumber;
     }
 
