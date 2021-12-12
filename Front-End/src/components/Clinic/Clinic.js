@@ -10,6 +10,7 @@ import {CreateClinic} from "../../services";
 import {clinicSliceActions} from "../../store/clinicSlice";
 import {toast, ToastContainer} from "react-toastify";
 import {Navigate} from "react-router-dom";
+import {timeSliceActions} from "../../store/timeSlice";
 
 const Clinic = () => {
     const dispatch = useDispatch();
@@ -78,6 +79,7 @@ const Clinic = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
+        dispatch(timeSliceActions.setCurrentTime(new Date().toLocaleString()));
         dispatch(CreateClinic(clinic));
         dispatch(clinicSliceActions.setError(''));
     };
