@@ -14,6 +14,7 @@ import {userSliceActions} from "../../store/userSlice";
 import {useNavigate} from "react-router-dom";
 import {formatMMddYYYY} from "../../common/datehelper";
 import {useFirebase} from "react-redux-firebase";
+import {timeSliceActions} from "../../store/timeSlice";
 
 const Signup = () => {
 
@@ -61,6 +62,7 @@ const Signup = () => {
 
     const onSubmit = (e) => {
         e.preventDefault();
+        dispatch(timeSliceActions.setCurrentTime(new Date().toLocaleString()));
         dispatch(CreateUser(user));
         dispatch(userSliceActions.setError(''));
     };
