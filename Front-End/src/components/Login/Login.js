@@ -9,6 +9,7 @@ import {GoogleAuthProvider} from "firebase/auth";
 import {userSliceActions} from "../../store/userSlice";
 import {useNavigate} from "react-router-dom";
 import {toast, ToastContainer} from "react-toastify";
+import {GetUser} from "../../services";
 
 const provider = new GoogleAuthProvider();
 
@@ -17,6 +18,8 @@ const Login = () => {
     const [password, setPassword] = useState('Poonam@12313');
 
     const [emailVerified, setEmailVerified] = useState(null);
+
+    const isSuccess = useSelector(state => state.userSlice.isSuccess);
 
     const error = useSelector(state => state.userSlice.error);
 
@@ -31,6 +34,16 @@ const Login = () => {
             toast.error(error, {position: "top-left", closeOnClick: true});
         }
     }, [error]);
+
+    useEffect(() => {
+        if (isSuccess) {
+            toast.success('Login success', {position: "top-left", closeOnClick: true, delay: 1});
+            dispatch(userSliceActions.setIsSuccess(false));
+            setTimeout(() => {
+                navigate('/')
+            }, 2000)
+        }
+    }, [isSuccess]);
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -57,15 +70,7 @@ const Login = () => {
 
     useEffect(() => {
         if (emailVerified) {
-            toast.success('Login successful', {
-                toastId: "login-success",
-                position: "top-left",
-                closeOnClick: true,
-                delay: 3
-            });
-            setTimeout(() => {
-                navigate('/')
-            }, 2000);
+            dispatch(GetUser(email));
         }
         if (emailVerified === false) {
             toast.error('Please verify the email first before using the account', {
