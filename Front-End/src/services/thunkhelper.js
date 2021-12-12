@@ -20,8 +20,8 @@ export function createPostThunk(type, url) {
 export function createGetThunk(type, url) {
     return createAsyncThunk(
         type,
-        (data, {dispatch, rejectWithValue}) =>
-            axios.get(url,
+        (urlSuffix, {dispatch, rejectWithValue}) =>
+            axios.get(url+urlSuffix,
                 {
                     headers: {
                         "Accept": "application/json",

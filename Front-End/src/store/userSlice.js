@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit'
-import {CreateUser} from "../services";
+import {CreateUser, GetUser} from "../services";
 
 const userSlice = createSlice({
     name: 'user',
@@ -23,6 +23,13 @@ const userSlice = createSlice({
             state.isSuccess = true;
         },
         [CreateUser.rejected]: (state, action) => {
+            state.error = action.payload;
+        },
+        [GetUser.fulfilled]: (state, action) => {
+            state.user = action.payload;
+            state.isSuccess = true;
+        },
+        [GetUser.rejected]: (state, action) => {
             state.error = action.payload;
         },
     }
