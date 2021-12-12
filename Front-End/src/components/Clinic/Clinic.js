@@ -9,9 +9,12 @@ import {useEffect, useState} from "react";
 import {CreateClinic} from "../../services";
 import {clinicSliceActions} from "../../store/clinicSlice";
 import {toast, ToastContainer} from "react-toastify";
+import {Navigate} from "react-router-dom";
 
 const Clinic = () => {
     const dispatch = useDispatch();
+
+    const user = useSelector(state => state.userSlice.user);
 
     const error = useSelector(state => state.clinicSlice.error);
 
@@ -81,6 +84,7 @@ const Clinic = () => {
 
     return (
         <div>
+            {!user && <Navigate to='/' />}
             <Navigationbar/>
             <ToastContainer/>
             <div className="container">
