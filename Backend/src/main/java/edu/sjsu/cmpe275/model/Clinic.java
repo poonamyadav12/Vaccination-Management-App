@@ -30,8 +30,8 @@ public class Clinic {
     @AttributeOverride(name = "minute", column = @Column(name = "close_minute"))
     private TimeOfDay closeTime;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "clinic")
     @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "clinic")
     private List<Appointment> appointments;
 
     public Clinic(String name, int numberOfPhysicians, Address address, TimeOfDay openTime, TimeOfDay closeTime) {
