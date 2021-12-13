@@ -101,4 +101,15 @@ public class AppointmentController {
         }
         return ResponseEntity.ok(userOpt.get().getAppointments());
     }
+
+    @PostMapping(value = "appointment/checkin", produces = {"application/json"})
+    ResponseEntity<?> checkInAppointment(@RequestParam("appointmentId") Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId).get();
+        if (appointment.isCheckInStatus()) {
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "Already Checked In");
+        }
+        appointment.setCheckInStatus(true);
+        appointmentRepository.save(appointment);
+        return ResponseEntity.ok("Checked In");
+    }
 }

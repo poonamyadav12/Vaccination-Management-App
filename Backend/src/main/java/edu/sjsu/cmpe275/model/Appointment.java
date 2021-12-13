@@ -31,6 +31,9 @@ public class Appointment {
             inverseJoinColumns = @JoinColumn(name = "vaccineId"))
     private List<Vaccine> vaccines;
 
+    @Column(columnDefinition = "boolean default false",nullable = true)
+    private boolean checkInStatus;
+
     public Appointment(Date time, User user, Clinic clinic) {
         this.time = time;
         this.user = user;
@@ -84,5 +87,13 @@ public class Appointment {
 
     public void addVaccine(Vaccine vaccine){
      this.vaccines.add(vaccine);
+    }
+
+    public boolean isCheckInStatus() {
+        return checkInStatus;
+    }
+
+    public void setCheckInStatus(boolean checkInStatus) {
+        this.checkInStatus = checkInStatus;
     }
 }
