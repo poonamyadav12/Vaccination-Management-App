@@ -8,6 +8,7 @@ import Clinic from "./components/Clinic/Clinic";
 import SignupStart from "./components/Signup/SignupStart";
 import Disease from "./components/Disease/Disease";
 import Vaccine from "./components/Vaccine/Vaccine";
+import Appointment from "./components/Appointment/Appointment";
 
 const LandingPage = React.lazy(() =>
     import("./components/LandingPage/LandingPage")
@@ -35,6 +36,8 @@ function App() {
                     <Route path="/clinic" element={<Clinic/>}/>
                     <Route path="/disease" element={<Disease/>}/>
                     <Route path="/vaccine" element={<Vaccine/>}/>
+                    <Route path="/appointment" element={<Appointment/>}/>
+
                 </Routes>
             </Suspense>
         </div>

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -26,15 +25,15 @@ public class AppointmentController {
     private ClinicRepository clinicRepository;
 
     @GetMapping(value = "/appointmentSlots/{selectedDate}", produces = {"application/json"})
-    ResponseEntity<?> getAppointmentSlots(@RequestParam("currentTime") String currentTimeStr,
+    ResponseEntity<?> getAppointmentSlots(@RequestParam("time") String currentTimeStr,
                                           @PathVariable("selectedDate") String selectedDateStr) {
         Date currentTimeDt = parseDateTime(currentTimeStr);
         Date selectedDate = parseDate(selectedDateStr);
         if (selectedDate.before(atStartOfDay(currentTimeDt))) {
-            return ResponseEntity.ok(new ArrayList<>());
+            return ResponseEntity.ok(null);
         }
         if (DateUtil.durationDays(atStartOfDay(currentTimeDt), selectedDate) > 365) {
-            return ResponseEntity.ok(new ArrayList<>());
+            return ResponseEntity.ok(null);
         }
         List<Clinic> clinics = clinicRepository.findAll();
 
@@ -53,7 +52,7 @@ public class AppointmentController {
             AppointmentOptions.ClinicAppointment.Slot slot = new AppointmentOptions.ClinicAppointment.Slot();
             slot.setDate(selectedDateStr);
             // Create appointment slots at 15 minutes apart.
-            for (int minute = startMinutes / 15 * 15; minute < closeMinutes; minute += 15) {
+            for (int minute = (int) Math.ceil(startMinutes / 15.0) * 15; minute < closeMinutes; minute += 15) {
                 slot.addTime(formatDateTime(addMinutes(selectedDate, minute)));
             }
             clinicAppointment.addSlots(slot);
