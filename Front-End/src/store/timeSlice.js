@@ -1,4 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
+import axios from "axios";
 
 const CURRENT_TIME = 'currentTime';
 const currentTime = localStorage.getItem(CURRENT_TIME);
@@ -11,9 +12,11 @@ const timeSlice = createSlice({
         setCurrentTime(state, action) {
             state.time = action.payload;
             localStorage.setItem(CURRENT_TIME, action.payload.toString());
+            axios.defaults.params['time'] = action.payload;
         },
         clearTime(state, action) {
             state.time = null;
+            axios.defaults.params['time'] = new Date();
             localStorage.setItem(CURRENT_TIME, null);
         }
     },
