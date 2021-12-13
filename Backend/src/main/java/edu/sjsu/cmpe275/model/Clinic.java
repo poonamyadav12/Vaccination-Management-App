@@ -8,15 +8,20 @@ public class Clinic {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     @Column(unique = true)
     private String name;
+
     private int numberOfPhysicians;
+
     @Embedded
     private Address address;
+
     @Embedded
     @AttributeOverride(name = "hour", column = @Column(name = "open_hour"))
     @AttributeOverride(name = "minute", column = @Column(name = "open_minute"))
     private TimeOfDay openTime;
+
     @Embedded
     @AttributeOverride(name = "hour", column = @Column(name = "close_hour"))
     @AttributeOverride(name = "minute", column = @Column(name = "close_minute"))
