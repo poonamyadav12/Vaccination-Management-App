@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static edu.sjsu.cmpe275.common.DateUtil.*;
 
@@ -102,14 +103,27 @@ public class AppointmentController {
         return ResponseEntity.ok(userOpt.get().getAppointments());
     }
 
-    @PostMapping(value = "appointment/checkin", produces = {"application/json"})
-    ResponseEntity<?> checkInAppointment(@RequestParam("appointmentId") Long appointmentId) {
+    @PostMapping(value = "appointment/checkin/{currentTimeStr}", produces = {"application/json"})
+    ResponseEntity<?> checkInAppointment(@PathVariable("currentTimeStr") String currentTimeStr, @RequestParam("appointmentId") Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId).get();
-        if (appointment.isCheckInStatus()) {
+        Date currentTime = parseDateTime(currentTimeStr);
+        System.out.println("time " + currentTime);
+        Date appointmentTime = appointment.getTime();
+        System.out.println("Appointment time" + appointmentTime);
+        long diffInMillies = appointmentTime.getTime() - currentTime.getTime();
+        if(diffInMillies<0){
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "Already in past");
+        }
+        long diff = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+        if (diff > 24) {
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "Difference Between Current Time And Appointment Time Is Greater Than 24Hrs");
+        }
+        System.out.println("diff"+diff);
+        /* if (appointment.isCheckInStatus()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "Already Checked In");
         }
         appointment.setCheckInStatus(true);
-        appointmentRepository.save(appointment);
+        appointmentRepository.save(appointment); */
         return ResponseEntity.ok("Checked In");
     }
 }
