@@ -1,5 +1,6 @@
 package edu.sjsu.cmpe275.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 
 @Entity
 public class Vaccine {
+
     @Id
     @GeneratedValue(generator = "system-uuid")
     @GenericGenerator(name = "system-uuid", strategy = "uuid")
@@ -43,6 +45,7 @@ public class Vaccine {
     @NotNull
     private Integer duration;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "vaccines")
     private List<Appointment> appointments;
 
@@ -105,6 +108,10 @@ public class Vaccine {
 
     public void setDuration(Integer duration) {
         this.duration = duration;
+    }
+
+    public String getVaccineId() {
+        return vaccineId;
     }
 
     @Override
