@@ -15,6 +15,8 @@ const Navigationbar = () => {
 
     const time = useSelector(state => state.timeSlice.time);
 
+    const admin = user?user.admin:false;
+
     console.log("User here", user);
     const firebase = useFirebase();
     const dispatch = useDispatch();
@@ -52,7 +54,7 @@ const Navigationbar = () => {
                         pathname: '/login',
                     }}
                 ><Button className="mr-sm-2 navbarbuttons">Login
-                </Button></Link>) : (
+                </Button></Link>) : admin?(
                     <>
                         <Link
                             id="addNewClinic"
@@ -86,7 +88,14 @@ const Navigationbar = () => {
                         ><Button className="mr-sm-2 navbarbuttons" onClick={handleLogout}>Logout
                         </Button>
                         </Link>
-                    </>)}
+                    </>):(<Link
+                            id="logout"
+                            to={{
+                                pathname: '/login',
+                            }}
+                        ><Button className="mr-sm-2 navbarbuttons" onClick={handleLogout}>Logout
+                        </Button>
+                        </Link>)}
             </Nav>
         </>
     );
