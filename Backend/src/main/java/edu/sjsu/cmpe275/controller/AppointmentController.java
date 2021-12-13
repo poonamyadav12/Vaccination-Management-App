@@ -70,8 +70,8 @@ public class AppointmentController {
     }
 
     @PostMapping(value = "appointment/create", produces = {"application/json"})
-    ResponseEntity<?> createAppointment(@RequestParam("userID") String userID, @RequestParam("clinicID") String clinicID, @RequestParam("bookingTime") String bookingTime, @RequestParam("vaccineID") String vaccineID) {
-        Optional<User> userOpt = userRepository.findById(Integer.parseInt(userID));
+    ResponseEntity<?> createAppointment(@RequestParam("userID") Long userID, @RequestParam("clinicID") String clinicID, @RequestParam("bookingTime") String bookingTime, @RequestParam("vaccineID") String vaccineID) {
+        Optional<User> userOpt = userRepository.findById(userID);
         if (userOpt.isEmpty()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "User is not available");
         }
@@ -89,5 +89,14 @@ public class AppointmentController {
         appointment.addVaccine(vaccineOpt.get());
         appointmentRepository.save(appointment);
         return ResponseEntity.ok("Success");
+    }
+
+    @GetMapping(value = "/appointments/{emailId}", produces = {"application/json"})
+    ResponseEntity<?> getAppointments(@PathVariable String emailId) {
+        Optional<User> userOpt = userRepository.findUserByEmail(emailId);
+        if (userOpt.isEmpty()) {
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "Invalid user ID");
+        }
+        return ResponseEntity.ok(userOpt.get().getAppointments());
     }
 }

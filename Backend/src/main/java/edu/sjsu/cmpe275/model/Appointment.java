@@ -1,5 +1,7 @@
 package edu.sjsu.cmpe275.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,11 +16,12 @@ public class Appointment {
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medicalRecordNumber")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "clinicId")
     private Clinic clinic;
 
