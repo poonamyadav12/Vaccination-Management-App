@@ -14,16 +14,18 @@ public class Appointment {
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "medicalRecordNumber")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clinicId")
     private Clinic clinic;
 
     @ManyToMany
     @JoinTable(name = "appointment_vaccines",
-            joinColumns = @JoinColumn(name = "vaccineId"),
-            inverseJoinColumns = @JoinColumn(name = "id"))
+            joinColumns = @JoinColumn(name = "id"),
+            inverseJoinColumns = @JoinColumn(name = "vaccineId"))
     private List<Vaccine> vaccines;
 
     public Appointment(Date time, User user, Clinic clinic) {
