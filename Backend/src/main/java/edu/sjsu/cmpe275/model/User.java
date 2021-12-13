@@ -1,13 +1,11 @@
 package edu.sjsu.cmpe275.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.checkerframework.common.aliasing.qual.Unique;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Entity
 public class User {
@@ -32,6 +30,10 @@ public class User {
 
     @Embedded
     private Address address;
+
+    @OneToMany
+    private List<Appointment> appointments;
+
 
     public edu.sjsu.cmpe275.model.Address getAddress() {
         return address;

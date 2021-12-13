@@ -1,6 +1,7 @@
 package edu.sjsu.cmpe275.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,11 +26,11 @@ public class Appointment {
             inverseJoinColumns = @JoinColumn(name = "id"))
     private List<Vaccine> vaccines;
 
-    public Appointment(Date time, User user, Clinic clinic, List<Vaccine> vaccines) {
+    public Appointment(Date time, User user, Clinic clinic) {
         this.time = time;
         this.user = user;
         this.clinic = clinic;
-        this.vaccines = vaccines;
+        this.vaccines = new ArrayList<>();
     }
 
     public Appointment() {
@@ -74,5 +75,9 @@ public class Appointment {
 
     public void setVaccines(List<Vaccine> vaccines) {
         this.vaccines = vaccines;
+    }
+
+    public void addVaccine(Vaccine vaccine){
+     this.vaccines.add(vaccine);
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ClinicRepository extends JpaRepository<Clinic, String> {
+public interface ClinicRepository extends JpaRepository<Clinic, Long> {
     @Query("select c from Clinic c where (c.openTime.hour > ?1 or (c.openTime.hour = ?1 and c.openTime.minute > ?2)) and (c.closeTime.hour < ?1 or (c.closeTime.hour = ?1 and c.closeTime.minute < ?2))")
     List<Clinic> findClinicsWithinTimeRange(int hour, int minute);
 }
