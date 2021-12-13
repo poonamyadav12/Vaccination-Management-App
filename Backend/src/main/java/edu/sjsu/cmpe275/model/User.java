@@ -35,6 +35,8 @@ public class User {
 
     private String gender;
 
+    private boolean admin;
+
     @Embedded
     private Address address;
 
@@ -113,6 +115,7 @@ public class User {
                 ", firstname='" + firstname + '\'' +
                 ", middlename='" + middlename + '\'' +
                 ", lastname='" + lastname + '\'' +
+                ", admin='" + admin + '\'' +
                 '}';
     }
 
@@ -122,5 +125,13 @@ public class User {
 
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
+    }
+    
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }
