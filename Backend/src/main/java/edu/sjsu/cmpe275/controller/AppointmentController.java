@@ -11,6 +11,7 @@ import edu.sjsu.cmpe275.repository.VaccineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -69,7 +70,8 @@ public class AppointmentController {
         return ResponseEntity.ok(options);
     }
 
-    @PostMapping(value = "appointment/create", produces = {"application/json"})
+    @PostMapping(value = "appointment/create")
+    @Transactional
     ResponseEntity<?> createAppointment(@RequestParam("userID") Long userID, @RequestParam("clinicID") String clinicID, @RequestParam("bookingTime") String bookingTime, @RequestParam("vaccineID") String vaccineID) {
         Optional<User> userOpt = userRepository.findById(userID);
         if (userOpt.isEmpty()) {
