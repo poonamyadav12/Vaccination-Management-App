@@ -2,15 +2,15 @@ import {
     Form, Button, Container, Col, Row, Figure
 } from 'react-bootstrap';
 import Navigationbar from '../Navigationbar/Navigationbar';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import TimeSelect from "react-time-select";
 import './Clinic.css'
-import {useEffect, useState} from "react";
-import {CreateClinic} from "../../services";
-import {clinicSliceActions} from "../../store/clinicSlice";
-import {toast, ToastContainer} from "react-toastify";
-import {Navigate} from "react-router-dom";
-import {timeSliceActions} from "../../store/timeSlice";
+import { useEffect, useState } from "react";
+import { CreateClinic } from "../../services";
+import { clinicSliceActions } from "../../store/clinicSlice";
+import { toast, ToastContainer } from "react-toastify";
+import { Navigate } from "react-router-dom";
+import { timeSliceActions } from "../../store/timeSlice";
 
 const Clinic = () => {
     const dispatch = useDispatch();
@@ -23,13 +23,13 @@ const Clinic = () => {
 
     useEffect(() => {
         if (error) {
-            toast.error(error, {position: "top-left", closeOnClick: true});
+            toast.error(error, { position: "top-left", closeOnClick: true });
         }
     }, [error]);
 
     useEffect(() => {
         if (isSuccess) {
-            toast.success('Clinic added successfully', {position: "top-left", closeOnClick: true, delay: 1});
+            toast.success('Clinic added successfully', { position: "top-left", closeOnClick: true, delay: 1 });
             dispatch(clinicSliceActions.setIsSuccess(false));
         }
     }, [isSuccess]);
@@ -48,47 +48,54 @@ const Clinic = () => {
     });
 
     const onChangeClinicName = (e) => {
-        setClinic({...clinic, name: e.target.value});
+        setClinic({ ...clinic, name: e.target.value });
     }
 
     const onChangeNumberOfPhysicians = (e) => {
-        setClinic({...clinic, numberOfPhysicians: e.target.value});
+        setClinic({ ...clinic, numberOfPhysicians: e.target.value });
     }
 
     const onOpenTimeChange = (e) => {
-        setClinic({...clinic, openTime: {...clinic.openTime, hour: parseInt(e.hours),minute:parseInt(e.minutes)}});
+        setClinic({ ...clinic, openTime: { ...clinic.openTime, hour: parseInt(e.hours), minute: parseInt(e.minutes) } });
     }
     const onCloseTimeChange = (e) => {
-        setClinic({...clinic, closeTime: {...clinic.closeTime, hour: parseInt(e.hours),minute:parseInt(e.minutes)}});
+        setClinic({ ...clinic, closeTime: { ...clinic.closeTime, hour: parseInt(e.hours), minute: parseInt(e.minutes) } });
     }
     const onChangeStreetDetails = (e) => {
-        setClinic({...clinic, address: {...clinic.address, street: e.target.value}});
+        setClinic({ ...clinic, address: { ...clinic.address, street: e.target.value } });
     }
 
     const onChangeCity = (e) => {
-        setClinic({...clinic, address: {...clinic.address, city: e.target.value}});
+        setClinic({ ...clinic, address: { ...clinic.address, city: e.target.value } });
     }
 
     const onChangeState = (e) => {
-        setClinic({...clinic, address: {...clinic.address, state: e.target.value}});
+        setClinic({ ...clinic, address: { ...clinic.address, state: e.target.value } });
     }
 
     const onChangeZipCode = (e) => {
-        setClinic({...clinic, address: {...clinic.address, zipCode: e.target.value}});
+        setClinic({ ...clinic, address: { ...clinic.address, zipCode: e.target.value } });
     }
 
     const onSubmit = (e) => {
         e.preventDefault();
-        dispatch(timeSliceActions.setCurrentTime(new Date().toLocaleString()));
-        dispatch(CreateClinic(clinic));
-        dispatch(clinicSliceActions.setError(''));
+        const openMinute = clinic.openTime.minute + clinic.openTime.hour * 60;
+        const closeMinute = clinic.closeTime.minute + clinic.closeTime.hour * 60;
+
+        if (closeMinute - openMinute < 480) {
+            toast.error("Minimum 8 hours of business hours is required", { position: "top-left", closeOnClick: true });
+        } else {
+            dispatch(timeSliceActions.setCurrentTime(new Date().toLocaleString()));
+            dispatch(CreateClinic(clinic));
+            dispatch(clinicSliceActions.setError(''));
+        }
     };
 
     return (
         <div>
             {!user && <Navigate to='/' />}
-            <Navigationbar/>
-            <ToastContainer/>
+            <Navigationbar />
+            <ToastContainer />
             <div className="container">
                 <Container>
                     <div>
@@ -106,52 +113,52 @@ const Clinic = () => {
                                     <Form.Group className="loginbox" controlId="formEmail">
                                         <Form.Label>Enter Clinic name</Form.Label>
                                         <Form.Control type="text" name="name" placeholder="Enter Clinic Name"
-                                                      onChange={onChangeClinicName} required/>
+                                            onChange={onChangeClinicName} required />
                                     </Form.Group>
                                     <Form.Group className="loginbox" controlId="formPassword">
                                         <Form.Label>Enter Number Of Physicians</Form.Label>
                                         <Form.Control type="text" name="numberOfPhysicians"
-                                                      placeholder="Enter Number Of Physicians"
-                                                      onChange={onChangeNumberOfPhysicians} required/>
+                                            placeholder="Enter Number Of Physicians"
+                                            onChange={onChangeNumberOfPhysicians} required />
                                     </Form.Group>
                                     <Row>
                                         <Col>
                                             <Form.Group className="loginbox" controlId="openTime">
                                                 <Form.Label>Open time</Form.Label>
-                                                <TimeSelect label="Choose opening time" onChange={onOpenTimeChange}/>
+                                                <TimeSelect label="Choose opening time" onChange={onOpenTimeChange} />
                                             </Form.Group>
                                         </Col>
                                         <Col>
                                             <Form.Group className="loginbox" controlId="closeTime">
                                                 <Form.Label>Close time</Form.Label>
-                                                <TimeSelect label="Choose closing time" onChange={onCloseTimeChange}/>
+                                                <TimeSelect label="Choose closing time" onChange={onCloseTimeChange} />
                                             </Form.Group>
                                         </Col>
                                     </Row>
                                     <Form.Group className="loginbox" controlId="formStreetDetails">
                                         <Form.Label>Enter Your Street Details</Form.Label>
                                         <Form.Control type="text" name="streetdetails"
-                                                      placeholder="Enter Your Street Details"
-                                                      onChange={onChangeStreetDetails} required
-                                                      defaultValue={clinic.address.street}/>
+                                            placeholder="Enter Your Street Details"
+                                            onChange={onChangeStreetDetails} required
+                                            defaultValue={clinic.address.street} />
                                     </Form.Group>
                                     <Form.Group className="loginbox" controlId="formCity">
                                         <Form.Label>Enter Your Street Details</Form.Label>
                                         <Form.Control type="text" name="city" placeholder="Enter Your City"
-                                                      onChange={onChangeCity} required
-                                                      defaultValue={clinic.address.city}/>
+                                            onChange={onChangeCity} required
+                                            defaultValue={clinic.address.city} />
                                     </Form.Group>
                                     <Form.Group className="loginbox" controlId="formState">
                                         <Form.Label>Enter Your Street Details</Form.Label>
                                         <Form.Control type="text" name="state" placeholder="Enter Your State"
-                                                      onChange={onChangeState} required defaultValue={clinic.address.state}/>
+                                            onChange={onChangeState} required defaultValue={clinic.address.state} />
                                     </Form.Group>
                                     <Form.Group className="loginbox" controlId="formZipCode">
                                         <Form.Label>Enter Your Street Details</Form.Label>
                                         <Form.Control type="text" name="zipcode" placeholder="Enter Your Zip Code"
-                                                      onChange={onChangeZipCode} required defaultValue={clinic.address.zipCode}/>
+                                            onChange={onChangeZipCode} required defaultValue={clinic.address.zipCode} />
                                     </Form.Group>
-                                    <br/>
+                                    <br />
                                     <Button id="loginbutton" type="submit">
                                         Submit
                                     </Button>
