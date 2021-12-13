@@ -34,6 +34,10 @@ public class TimeOfDay implements Serializable {
         this.minute = minute;
     }
 
+    public int minuteOfDay() {
+        return hour * 60 + minute;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -45,5 +49,13 @@ public class TimeOfDay implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(getHour(), getMinute());
+    }
+
+    @Override
+    public String toString() {
+        return "TimeOfDay{" +
+                "hour=" + hour +
+                ", minute=" + minute +
+                '}';
     }
 }

@@ -7,9 +7,13 @@ import {
 import {useDispatch, useSelector} from "react-redux";
 import {useFirebase} from "react-redux-firebase";
 import {userSliceActions} from "../../store/userSlice";
+import {timeSliceActions} from "../../store/timeSlice";
+import DateTimePicker from "react-datetime-picker";
 
 const Navigationbar = () => {
     const user = useSelector(state => state.userSlice.user);
+
+    const time = useSelector(state => state.timeSlice.time);
 
     console.log("User here", user);
     const firebase = useFirebase();
@@ -23,57 +27,68 @@ const Navigationbar = () => {
     }
 
     let navLogin = null
+
+    const onDateChange = async (date) => {
+        dispatch(timeSliceActions.setCurrentTime(date));
+    }
+
     navLogin = (
-        <Nav className="ml-auto">
-            {!user && (<Link
-                id="loginLink"
-                to={{
-                    pathname: '/signup',
-                }}
-            ><Button className="mr-sm-2 navbarbuttons">Sign Up
-            </Button></Link>)}
-            {!user ? (<Link
-                id="signUpLink"
-                to={{
-                    pathname: '/login',
-                }}
-            ><Button className="mr-sm-2 navbarbuttons">Login
-            </Button></Link>) : (
-                <>
-                    <Link
-                        id="addNewClinic"
-                        to={{
-                            pathname: '/clinic',
-                        }}
-                    ><Button className="mr-sm-2 navbarbuttons">New Clinic
-                    </Button>
-                    </Link>
-                    <Link
-                        id="addNewClinic"
-                        to={{
-                            pathname: '/disease',
-                        }}
-                    ><Button className="mr-sm-2 navbarbuttons">New Disease
-                    </Button>
-                    </Link>
-                    <Link
-                        id="addNewClinic"
-                        to={{
-                            pathname: '/vaccine',
-                        }}
-                    ><Button className="mr-sm-2 navbarbuttons">New Vaccine
-                    </Button>
-                    </Link>
-                    <Link
-                        id="logout"
-                        to={{
-                            pathname: '/login',
-                        }}
-                    ><Button className="mr-sm-2 navbarbuttons" onClick={handleLogout}>Logout
-                    </Button>
-                    </Link>
-                </>)}
-        </Nav>
+        <>
+            {user && <DateTimePicker
+                onChange={onDateChange}
+                value={time}
+            />}
+            <Nav className="ml-auto">
+                {!user && (<Link
+                    id="loginLink"
+                    to={{
+                        pathname: '/signup',
+                    }}
+                ><Button className="mr-sm-2 navbarbuttons">Sign Up
+                </Button></Link>)}
+                {!user ? (<Link
+                    id="signUpLink"
+                    to={{
+                        pathname: '/login',
+                    }}
+                ><Button className="mr-sm-2 navbarbuttons">Login
+                </Button></Link>) : (
+                    <>
+                        <Link
+                            id="addNewClinic"
+                            to={{
+                                pathname: '/clinic',
+                            }}
+                        ><Button className="mr-sm-2 navbarbuttons">New Clinic
+                        </Button>
+                        </Link>
+                        <Link
+                            id="addNewClinic"
+                            to={{
+                                pathname: '/disease',
+                            }}
+                        ><Button className="mr-sm-2 navbarbuttons">New Disease
+                        </Button>
+                        </Link>
+                        <Link
+                            id="addNewClinic"
+                            to={{
+                                pathname: '/vaccine',
+                            }}
+                        ><Button className="mr-sm-2 navbarbuttons">New Vaccine
+                        </Button>
+                        </Link>
+                        <Link
+                            id="logout"
+                            to={{
+                                pathname: '/login',
+                            }}
+                        ><Button className="mr-sm-2 navbarbuttons" onClick={handleLogout}>Logout
+                        </Button>
+                        </Link>
+                    </>)}
+            </Nav>
+        </>
     );
 
     return (
