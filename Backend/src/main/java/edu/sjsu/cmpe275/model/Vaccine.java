@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -41,6 +42,9 @@ public class Vaccine {
 
     @NotNull
     private Integer duration;
+
+    @ManyToMany(mappedBy = "vaccines")
+    private List<Appointment> appointments;
 
     public Vaccine() {
     }
@@ -114,5 +118,13 @@ public class Vaccine {
                 ", shotIntervalVal=" + shotIntervalVal +
                 ", duration=" + duration +
                 '}';
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 }
