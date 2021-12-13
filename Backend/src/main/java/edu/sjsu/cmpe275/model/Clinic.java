@@ -1,6 +1,9 @@
 package edu.sjsu.cmpe275.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Clinic {
@@ -26,6 +29,10 @@ public class Clinic {
     @AttributeOverride(name = "hour", column = @Column(name = "close_hour"))
     @AttributeOverride(name = "minute", column = @Column(name = "close_minute"))
     private TimeOfDay closeTime;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "clinic")
+    @JsonIgnore
+    private List<Appointment> appointments;
 
     public Clinic(String name, int numberOfPhysicians, Address address, TimeOfDay openTime, TimeOfDay closeTime) {
         this.name = name;
