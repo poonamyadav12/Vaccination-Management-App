@@ -3,9 +3,37 @@ import Navigationbar from "../Navigationbar/Navigationbar";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
+import { CreateDisease } from "../../services";
+import { diseaseSliceActions } from "../../store/diseaseSlice";
+import {Navigate} from "react-router-dom";
 import "./Disease.css";
 
 const Disease = () => {
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.userSlice.user);
+
+  const error = useSelector((state) => state.diseaseSlice.error);
+
+  const isSuccess = useSelector((state) => state.diseaseSlice.isSuccess);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error, { position: "top-left", closeOnClick: true });
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Disease added successfully", {
+        position: "top-left",
+        closeOnClick: true,
+        delay: 1,
+      });
+      dispatch(diseaseSliceActions.setIsSuccess(false));
+    }
+  }, [isSuccess]);
+
   const [disease, setDisease] = useState({
     name: "",
     description: "",
@@ -13,11 +41,15 @@ const Disease = () => {
 
   const onSubmit = (e) => {
     //Add Create Disease
-    debugger
+    debugger;
+    e.preventDefault();
+    dispatch(CreateDisease(disease));
+    dispatch(diseaseSliceActions.setError(""));
   };
 
   return (
     <div>
+      {!user && <Navigate to="/" />}
       <Navigationbar />
       <ToastContainer />
       <div className="container">
