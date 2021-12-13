@@ -1,20 +1,21 @@
 package edu.sjsu.cmpe275.controller;
 
 import edu.sjsu.cmpe275.common.DateUtil;
+import edu.sjsu.cmpe275.common.Error;
 import edu.sjsu.cmpe275.dto.AppointmentOptions;
-import edu.sjsu.cmpe275.model.Clinic;
-import edu.sjsu.cmpe275.model.TimeOfDay;
+import edu.sjsu.cmpe275.model.*;
+import edu.sjsu.cmpe275.repository.AppointmentRepository;
 import edu.sjsu.cmpe275.repository.ClinicRepository;
+import edu.sjsu.cmpe275.repository.UserRepository;
+import edu.sjsu.cmpe275.repository.VaccineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static edu.sjsu.cmpe275.common.DateUtil.*;
 
@@ -23,6 +24,12 @@ public class AppointmentController {
 
     @Autowired
     private ClinicRepository clinicRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    private VaccineRepository vaccineRepository;
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     @GetMapping(value = "/appointmentSlots/{selectedDate}", produces = {"application/json"})
     ResponseEntity<?> getAppointmentSlots(@RequestParam("time") String currentTimeStr,
@@ -60,5 +67,27 @@ public class AppointmentController {
         }
 
         return ResponseEntity.ok(options);
+    }
+
+    @PostMapping(value = "appointment/create", produces = {"application/json"})
+    ResponseEntity<?> createAppointment(@RequestParam("userID") String userID, @RequestParam("clinicID") String clinicID, @RequestParam("bookingTime") String bookingTime, @RequestParam("vaccineID") String vaccineID) {
+        Optional<User> userOpt = userRepository.findById(Integer.parseInt(userID));
+        if (userOpt.isEmpty()) {
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "User is not available");
+        }
+        Optional<Vaccine> vaccineOpt = vaccineRepository.findById(vaccineID);
+        if (vaccineOpt.isEmpty()) {
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "Vaccine is not available");
+        }
+        Optional<Clinic> clinicOpt = clinicRepository.findById(Long.valueOf(clinicID));
+        if (clinicOpt.isEmpty()) {
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "Clinic is not available");
+        }
+        Date bookingDateTime = parseDateTime(bookingTime);
+
+        Appointment appointment = new Appointment(bookingDateTime, userOpt.get(), clinicOpt.get());
+        appointment.addVaccine(vaccineOpt.get());
+        appointmentRepository.save(appointment);
+        return ResponseEntity.ok("Success");
     }
 }

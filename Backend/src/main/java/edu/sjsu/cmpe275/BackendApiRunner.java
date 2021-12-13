@@ -3,8 +3,10 @@ package edu.sjsu.cmpe275;
 import edu.sjsu.cmpe275.model.Address;
 import edu.sjsu.cmpe275.model.Clinic;
 import edu.sjsu.cmpe275.model.User;
+import edu.sjsu.cmpe275.model.Vaccine;
 import edu.sjsu.cmpe275.repository.ClinicRepository;
 import edu.sjsu.cmpe275.repository.UserRepository;
+import edu.sjsu.cmpe275.repository.VaccineRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -62,7 +64,7 @@ public class BackendApiRunner {
             //String reservationNumber, String origin, String destination, int price
 
             // fetch all customers
-            log.info("Clinics found with findAll():");
+            log.info("Clinic found with findAll():");
             log.info("-------------------------------");
             for (Clinic clinic : repository.findAll()) {
 //                repository.delete(customer);
@@ -72,24 +74,24 @@ public class BackendApiRunner {
         };
     }
 
-//    @Bean
-//    public CommandLineRunner demo2(ReservationRepository repository) {
-//        return (args) -> {
-//            // save a few customers=
-//
-//            //repository.save(new Reservation("4028d6fd7cdd25b2017cdd25b8120000","re2342345","SJC", "SFO", 123));
-//            //save some reservations
-//            //String reservationNumber, String origin, String destination, int price
-//            // fetch all customers
-//            log.info("Reservation found with findAll():");
-//            log.info("-------------------------------");
-//            for (Reservation customer : repository.findAll()) {
+    @Bean
+    public CommandLineRunner demo3(VaccineRepository repository) {
+        return (args) -> {
+            // save a few customers=
+
+            //repository.save(new Reservation("4028d6fd7cdd25b2017cdd25b8120000","re2342345","SJC", "SFO", 123));
+            //save some reservations
+            //String reservationNumber, String origin, String destination, int price
+            // fetch all customers
+            log.info("Vaccine found with findAll():");
+            log.info("-------------------------------");
+//            for (Vaccine customer : repository.findAll()) {
 //                //repository.delete(customer);
 //                log.info(customer.toString());
 //            }
-//            log.info("");
-//        };
-//    }
+            log.info("");
+        };
+    }
 //
 //    @Bean
 //    public CommandLineRunner flightTester(FlightRepository repository) throws ParseException {
