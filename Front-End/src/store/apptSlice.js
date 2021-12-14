@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {CreateAppointments, GetDueVaccines} from "../services";
+import {CreateAppointments, GetAppointments} from "../services";
 
 const appointmentSlice = createSlice({
     name: 'appointmentSlice',
@@ -10,6 +10,14 @@ const appointmentSlice = createSlice({
         },
         [CreateAppointments.rejected]: (state, action) => {
             state.error = action.payload;
+        },
+        [GetAppointments.fulfilled]: (state, action) => {
+            state.appointment = action.payload;
+            state.isSuccess = true;
+        },
+        [GetAppointments.rejected]: (state, action) => {
+            state.error = action.payload;
+            state.isSuccess = false;
         },
     }
 })
