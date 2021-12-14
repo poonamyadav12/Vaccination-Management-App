@@ -9,6 +9,7 @@ import {getDate} from "../../common/datehelper";
 import "./Appointment.css";
 import {GetSlots} from "../../services";
 import {ClinicAppointment} from "./ClinicAppointment";
+import {appointmentSliceActions} from "../../store/apptSlice";
 
 const Appointment = () => {
 

@@ -70,7 +70,7 @@ const Login = () => {
 
     useEffect(() => {
         if (emailVerified) {
-            dispatch(GetUser(email));
+            dispatch(GetUser(firebase.auth().currentUser.email));
         }
         if (emailVerified === false) {
             toast.error('Please verify the email first before using the account', {

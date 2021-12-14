@@ -8,12 +8,16 @@ const appointmentSlice = createSlice({
         setCheckinSuccess(state, action) {
             state.checkinSuccess = action.payload;
         },
+        setCreateAppointmentSuccess(state,action){
+            state.createAppointmentSuccess = action.payload;
+        }
     },
     extraReducers: {
         [CreateAppointments.fulfilled]: (state, action) => {
-            state.isSuccess = true;
+            state.createAppointmentSuccess = true;
         },
         [CreateAppointments.rejected]: (state, action) => {
+            state.createAppointmentSuccess = false;
             state.error = action.payload;
         },
         [GetAppointments.fulfilled]: (state, action) => {

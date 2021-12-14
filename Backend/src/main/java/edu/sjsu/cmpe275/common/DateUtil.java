@@ -18,7 +18,7 @@ public class DateUtil {
     private static final String LOS_ANGELES_TIMEZONE = "America/Los_Angeles";
 
     public static Date parseDateTime(String date) {
-        SimpleDateFormat jsfmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        SimpleDateFormat jsfmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.US);
         jsfmt.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {
             return jsfmt.parse(date);
