@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static edu.sjsu.cmpe275.common.DateUtil.*;
 
@@ -48,6 +50,8 @@ public class AppointmentController {
 
         AppointmentOptions options = new AppointmentOptions();
         for (Clinic clinic : clinics) {
+            List<Appointment> bookedAppointments = clinic.getAppointments();
+            Map<Date, Long> appointmentsByTime = bookedAppointments.stream().collect(Collectors.groupingBy(Appointment::getTime, Collectors.counting()));
             AppointmentOptions.ClinicAppointment clinicAppointment = new AppointmentOptions.ClinicAppointment();
             clinicAppointment.setClinic(clinic);
             int startMinutes = clinic.getOpenTime().minuteOfDay();
@@ -62,7 +66,11 @@ public class AppointmentController {
             slot.setDate(selectedDateStr);
             // Create appointment slots at 15 minutes apart.
             for (int minute = (int) Math.ceil(startMinutes / 15.0) * 15; minute < closeMinutes; minute += 15) {
-                slot.addTime(formatDateTime(addMinutes(selectedDate, minute)));
+                Date date = addMinutes(selectedDate, minute);
+                Long alreadyBooked = appointmentsByTime.getOrDefault(date, 0L);
+                if (alreadyBooked < clinic.getNumberOfPhysicians()) {
+                    slot.addTime(formatDateTime(date));
+                }
             }
             clinicAppointment.addSlots(slot);
             options.addAppointment(clinicAppointment);

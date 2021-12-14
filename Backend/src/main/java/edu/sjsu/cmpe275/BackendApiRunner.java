@@ -1,9 +1,7 @@
 package edu.sjsu.cmpe275;
 
-import edu.sjsu.cmpe275.model.Address;
 import edu.sjsu.cmpe275.model.Clinic;
 import edu.sjsu.cmpe275.model.User;
-import edu.sjsu.cmpe275.model.Vaccine;
 import edu.sjsu.cmpe275.repository.ClinicRepository;
 import edu.sjsu.cmpe275.repository.UserRepository;
 import edu.sjsu.cmpe275.repository.VaccineRepository;
