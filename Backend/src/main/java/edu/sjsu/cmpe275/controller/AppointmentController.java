@@ -73,7 +73,7 @@ public class AppointmentController {
 
     @PostMapping(value = "appointment/create")
     @Transactional
-    ResponseEntity<?> createAppointment(@RequestParam("userID") Long userID, @RequestParam("clinicID") String clinicID, @RequestParam("bookingTime") String bookingTime, @RequestParam("vaccineID") String vaccineID) {
+    ResponseEntity<?> createAppointment(@RequestParam("userID") Long userID, @RequestParam("clinicID") Long clinicID, @RequestParam("bookingTime") String bookingTime, @RequestParam("vaccineID") String vaccineID) {
         Optional<User> userOpt = userRepository.findById(userID);
         if (userOpt.isEmpty()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "User is not available");
@@ -82,7 +82,7 @@ public class AppointmentController {
         if (vaccineOpt.isEmpty()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "Vaccine is not available");
         }
-        Optional<Clinic> clinicOpt = clinicRepository.findById(Long.valueOf(clinicID));
+        Optional<Clinic> clinicOpt = clinicRepository.findById(clinicID);
         if (clinicOpt.isEmpty()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "Clinic is not available");
         }
@@ -103,22 +103,19 @@ public class AppointmentController {
         return ResponseEntity.ok(userOpt.get().getAppointments());
     }
 
-    @PostMapping(value = "appointment/checkin/{currentTimeStr}", produces = {"application/json"})
-    ResponseEntity<?> checkInAppointment(@PathVariable("currentTimeStr") String currentTimeStr, @RequestParam("appointmentId") Long appointmentId) {
+    @PostMapping(value = "appointment/checkin", produces = {"application/json"})
+    ResponseEntity<?> checkInAppointment(@RequestParam("appointmentId") Long appointmentId, @RequestParam("time") String currentTimeStr) {
         Appointment appointment = appointmentRepository.findById(appointmentId).get();
         Date currentTime = parseDateTime(currentTimeStr);
         System.out.println("time " + currentTime);
         Date appointmentTime = appointment.getTime();
-        System.out.println("Appointment time" + appointmentTime);
+        System.out.println("Appointment time " + appointmentTime.getTime());
         long diffInMillies = appointmentTime.getTime() - currentTime.getTime();
-        if(diffInMillies<0){
+        if (diffInMillies < 0) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "Already in past");
         }
         long diff = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-        if (diff > 24) {
-            return Error.badRequest(HttpStatus.BAD_REQUEST, "Difference Between Current Time And Appointment Time Is Greater Than 24Hrs");
-        }
-        System.out.println("diff"+diff);
+        System.out.println("diff" + diff);
         if (appointment.isCheckInStatus()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "Already Checked In");
         }
