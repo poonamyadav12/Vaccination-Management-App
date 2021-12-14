@@ -2,6 +2,11 @@ import {useEffect, useState} from "react";
 import {Button, InputGroup, Modal, Form} from "react-bootstrap";
 import {useDispatch, useSelector} from "react-redux";
 import {CreateAppointments, GetDueVaccines} from "../../services";
+import {toast} from "react-toastify";
+import {userSliceActions} from "../../store/userSlice";
+import {appointmentSliceActions} from "../../store/apptSlice";
+import {useNavigate} from "react-router-dom";
+import {vaccineSliceActions} from "../../store/vaccineSlice";
 
 export const BookModal = (props) => {
     const [vaccines, setVaccines] = useState([]);
@@ -10,10 +15,18 @@ export const BookModal = (props) => {
 
     const dueVaccines = useSelector(state => state.vaccineSlice.dueVaccines);
 
+    const isCreateAppointmentSuccess = useSelector(state => state.appointmentSlice.createAppointmentSuccess);
+
     const dispatch = useDispatch();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(GetDueVaccines(user.email));
+        return () => {
+            dispatch(appointmentSliceActions.setCreateAppointmentSuccess(false));
+            dispatch(vaccineSliceActions.clearDueVaccines(null));
+        }
     }, []);
 
     useEffect(() => {
@@ -24,6 +37,16 @@ export const BookModal = (props) => {
         e.preventDefault();
         dispatch(CreateAppointments(`?userID=${user.medicalRecordNumber}&clinicID=${props.clinic.id}&bookingTime=${props.time}&vaccineID=${vaccines.map(v => v.vaccineId).join(',')}`));
     }
+
+    useEffect(() => {
+        if (isCreateAppointmentSuccess) {
+            toast.success('Appointment creation successful', {position: "top-left", closeOnClick: true, delay: 1});
+            dispatch(appointmentSliceActions.setCreateAppointmentSuccess(false));
+            setTimeout(() => {
+                navigate('/bookedappointments')
+            }, 2000)
+        }
+    }, [isCreateAppointmentSuccess])
 
     const toggleVaccine = (v1) => {
         const isPresent = vaccines.some(v => v.vaccineId === v1.vaccineId);

@@ -16,6 +16,9 @@ const vaccineSlice = createSlice({
     setIsSuccess(state, action) {
       state.isSuccess = action.payload;
     },
+    clearDueVaccines(state, action) {
+      state.dueVaccines = null;
+    },
   },
   extraReducers: {
     [CreateVaccine.fulfilled]: (state, action) => {
