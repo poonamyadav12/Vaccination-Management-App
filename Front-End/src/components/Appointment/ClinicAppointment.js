@@ -1,5 +1,6 @@
 import {Button, Card, Row} from "react-bootstrap";
-import {getTime} from "../../common/datehelper";
+import {Fragment, useState} from "react";
+import {BookModal} from "./BookModal";
 
 export const ClinicAppointment = (props) => {
     return (
@@ -21,7 +22,7 @@ const ClinicView = (props) => (
             </Row>
             <br/>
             <Row>
-                <Slots slots={props.slots}/>
+                <Slots slots={props.slots} clinic={props.clinic}/>
             </Row>
         </Card.Body>
     </Card>
@@ -33,13 +34,28 @@ const Address = (props) => (
     </Row>
 )
 
-const Slots = (props) => (
-    <Row>
+const Slots = (props) => {
+
+    return <Row>
         {props.slots?.[0]?.times?.length === 0 &&
         <h6>No slots are available for this clinic at this time, please select a future date.</h6>}
-        {props.slots?.[0].times?.map(time =>
-            (<>
-                <Button style={{width: "100px", marginRight: "3px", marginBottom: "3px"}}> {time.substr(11, 5)}</Button>
-            </>))}
+        {props.slots?.[0].times?.map(time => <SingleSlot time={time} clinic={props.clinic} />)}
     </Row>
-)
+}
+
+const SingleSlot = (props) => {
+    const [isBookOpen, setBookOpen] = useState(false);
+
+    return <Fragment>
+        <Button style={{width: "100px", marginRight: "3px", marginBottom: "3px"}}
+                onClick={() => setBookOpen(true)}> {props.time.substr(11, 5)}</Button>
+        {isBookOpen ? (
+            <BookModal
+                time={props.time}
+                clinic={props.clinic}
+                closeModal={() => setBookOpen(false)}
+                isOpen={() => setBookOpen(true)}
+            />
+        ) : null}
+    </Fragment>;
+}

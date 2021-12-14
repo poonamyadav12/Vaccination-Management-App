@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CreateVaccine } from "../services";
+import { CreateVaccine, GetDueVaccines } from "../services";
 
 const vaccineSlice = createSlice({
   name: "vaccine",
@@ -25,6 +25,13 @@ const vaccineSlice = createSlice({
     [CreateVaccine.rejected]: (state, action) => {
       state.error = action.payload;
     },
+    [GetDueVaccines.fulfilled]: (state, action) => {
+      state.dueVaccines = action.payload;
+      state.isSuccess = true;
+  },
+  [GetDueVaccines.rejected]: (state, action) => {
+      state.error = action.payload;
+  },
   },
 });
 

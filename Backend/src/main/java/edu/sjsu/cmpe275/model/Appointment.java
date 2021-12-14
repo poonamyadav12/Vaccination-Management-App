@@ -1,6 +1,9 @@
 package edu.sjsu.cmpe275.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,23 +16,29 @@ public class Appointment {
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "medicalRecordNumber")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "clinicId")
     private Clinic clinic;
 
     @ManyToMany
     @JoinTable(name = "appointment_vaccines",
-            joinColumns = @JoinColumn(name = "vaccineId"),
-            inverseJoinColumns = @JoinColumn(name = "id"))
+            joinColumns = @JoinColumn(name = "id"),
+            inverseJoinColumns = @JoinColumn(name = "vaccineId"))
     private List<Vaccine> vaccines;
 
-    public Appointment(Date time, User user, Clinic clinic, List<Vaccine> vaccines) {
+    @Column(columnDefinition = "boolean default false",nullable = true)
+    private boolean checkInStatus;
+
+    public Appointment(Date time, User user, Clinic clinic) {
         this.time = time;
         this.user = user;
         this.clinic = clinic;
-        this.vaccines = vaccines;
+        this.vaccines = new ArrayList<>();
     }
 
     public Appointment() {
@@ -74,5 +83,17 @@ public class Appointment {
 
     public void setVaccines(List<Vaccine> vaccines) {
         this.vaccines = vaccines;
+    }
+
+    public void addVaccine(Vaccine vaccine){
+     this.vaccines.add(vaccine);
+    }
+
+    public boolean isCheckInStatus() {
+        return checkInStatus;
+    }
+
+    public void setCheckInStatus(boolean checkInStatus) {
+        this.checkInStatus = checkInStatus;
     }
 }

@@ -43,6 +43,12 @@ public class UserController {
     @Transactional
     public ResponseEntity<?> createUser(@RequestBody User user) throws ParseException {
         System.out.println("Coming here" + user.getEmail());
+        String[] email = user.getEmail().split("@");
+        if(email[1].equalsIgnoreCase("sjsu.edu")){
+            user.setAdmin(true);
+        }else{
+            user.setAdmin(false);
+        }
 //        try {
         User passenger1 = userRepository.save(user);
         System.out.println("Returning " + passenger1);

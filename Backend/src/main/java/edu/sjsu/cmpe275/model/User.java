@@ -1,28 +1,33 @@
 package edu.sjsu.cmpe275.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.checkerframework.common.aliasing.qual.Unique;
-import org.hibernate.annotations.GenericGenerator;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Entity
 public class User {
     @Id
     @SequenceGenerator(name = "MRNGenerator", sequenceName= "MRNSequence", initialValue = 100, allocationSize = 10)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MRNGenerator")
-    private int medicalRecordNumber;
+    private long medicalRecordNumber;
+
     @NotBlank(message = "Please enter email")
     @Email(message = "Please enter a valid email")
     @Column(unique = true)
+
     private String email;
     @NotBlank(message = "Please Enter First Name")
+
     private String firstname;
+
     private String middlename;
     @NotBlank(message = "Please Enter Last Name")
+
     private String lastname;
 
     @Pattern(regexp = "^(0[1-9]|1[0-2])-([0-2][0-9]|3[0-1])-[0-9]{4}$", message = "Date must be in the MM-dd-YYYY format")
@@ -30,8 +35,15 @@ public class User {
 
     private String gender;
 
+    private boolean admin;
+
     @Embedded
     private Address address;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonIgnore
+    private List<Appointment> appointments;
+
 
     public edu.sjsu.cmpe275.model.Address getAddress() {
         return address;
@@ -88,7 +100,7 @@ public class User {
         return dateOfBirth;
     }
 
-    public int getMedicalRecordNumber() {
+    public long getMedicalRecordNumber() {
         return medicalRecordNumber;
     }
 
@@ -103,6 +115,23 @@ public class User {
                 ", firstname='" + firstname + '\'' +
                 ", middlename='" + middlename + '\'' +
                 ", lastname='" + lastname + '\'' +
+                ", admin='" + admin + '\'' +
                 '}';
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
+    }
+    
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }
