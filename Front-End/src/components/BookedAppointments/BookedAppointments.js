@@ -1,16 +1,15 @@
-import axios from "axios";
 import React, {useEffect, useState} from "react";
 import {Container, Row} from "react-bootstrap";
-import Navigationbar from "../../Navigationbar/Navigationbar";
+import Navigationbar from "../Navigationbar/Navigationbar";
 import {Descriptions, Radio, Button} from 'antd';
 import './BookedAppointments.css';
 import {useDispatch, useSelector} from "react-redux";
-import {CheckinAppointments, GetAppointments} from "../../../services";
+import {CheckinAppointments, GetAppointments} from "../../services";
 import {Navigate} from "react-router-dom";
-import {isGreaterThan, isLessThan, toPstDate, toPstTime} from "../../../common/datehelper";
-import {GiCheckMark, ImCheckboxChecked, ImCheckmark, ImClock, ImCross, ImHistory} from "react-icons/all";
+import {toPstDate, toPstTime} from "../../common/datehelper";
+import {GiCheckMark, ImCheckboxChecked, ImClock, ImCross} from "react-icons/all";
 import ReactTooltip from "react-tooltip";
-import {appointmentSliceActions} from "../../../store/apptSlice";
+import {appointmentSliceActions} from "../../store/apptSlice";
 
 const BookedAppointments = () => {
     const dispatch = useDispatch();
@@ -30,8 +29,11 @@ const BookedAppointments = () => {
 
     useEffect(() => {
         if (appointments) {
-            setFutureAppointments(appointments.filter((appointment) => new Date(appointment.time) > time));
-            setPastAppointments(appointments.filter((appointment) => new Date(appointment.time) <= time));
+            const future = appointments.filter((appointment) => new Date(appointment.time) > time);
+            const past = appointments.filter((appointment) => new Date(appointment.time) <= time);
+            setRadioButtonStatus(future.length === 0 && past.length !== 0 ? "past" : "upcoming");
+            setFutureAppointments(future);
+            setPastAppointments(past);
         }
     }, [appointments])
 
