@@ -26,3 +26,7 @@
 .react-datetime-picker {
     background-color: antiquewhite;
 }
+
+.react-datetime-picker input {
+    width: unset !important;
+}
