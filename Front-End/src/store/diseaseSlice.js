@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CreateDisease } from "../services";
+import { CreateDisease, GetDisease } from "../services";
 
 const diseaseSlice = createSlice({
   name: "disease",
@@ -24,6 +24,10 @@ const diseaseSlice = createSlice({
     },
     [CreateDisease.rejected]: (state, action) => {
       state.error = action.payload;
+    },
+    [GetDisease.fulfilled]: (state, action) => {
+      state.disease = action.payload;
+      state.isSuccess = true;
     },
   },
 });

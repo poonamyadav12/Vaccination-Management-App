@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { CreateDisease } from "../../services";
 import { diseaseSliceActions } from "../../store/diseaseSlice";
-import {Navigate} from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import "./Disease.css";
 
 const Disease = () => {
@@ -40,8 +40,6 @@ const Disease = () => {
   });
 
   const onSubmit = (e) => {
-    //Add Create Disease
-    debugger;
     e.preventDefault();
     dispatch(CreateDisease(disease));
     dispatch(diseaseSliceActions.setError(""));
