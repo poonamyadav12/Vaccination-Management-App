@@ -2,7 +2,7 @@ import React, {Component, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import './Navigationbar.css'
 import {
-    Navbar, Nav, Button,
+    Navbar, Nav, Button, NavDropdown, Dropdown,
 } from 'react-bootstrap';
 import {useDispatch, useSelector} from "react-redux";
 import {useFirebase} from "react-redux-firebase";
@@ -15,7 +15,7 @@ const Navigationbar = () => {
 
     const time = useSelector(state => state.timeSlice.time);
 
-    const admin = user?user.admin:false;
+    const admin = user ? user.admin : false;
 
     console.log("User here", user);
     const firebase = useFirebase();
@@ -34,6 +34,20 @@ const Navigationbar = () => {
         dispatch(timeSliceActions.setCurrentTime(date));
     }
 
+    const adminNav = <>
+        <Dropdown>
+            <Dropdown.Toggle className="mr-sm-2 navbarbuttons" id="dropdown-basic">
+                Manage
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+                <Dropdown.Item href="/clinic">New Clinic</Dropdown.Item>
+                <Dropdown.Item href="/disease">New Disease</Dropdown.Item>
+                <Dropdown.Item href="/vaccine">New Vaccine</Dropdown.Item>
+            </Dropdown.Menu>
+        </Dropdown>
+    </>;
+
     navLogin = (
         <>
             {user && <DateTimePicker
@@ -49,35 +63,20 @@ const Navigationbar = () => {
                 ><Button className="mr-sm-2 navbarbuttons">Sign Up
                 </Button></Link>)}
                 {!user ? (<Link
-                    id="signUpLink"
-                    to={{
-                        pathname: '/login',
-                    }}
-                ><Button className="mr-sm-2 navbarbuttons">Login
-                </Button></Link>) : admin?(
+                        id="signUpLink"
+                        to={{
+                            pathname: '/login',
+                        }}
+                    ><Button className="mr-sm-2 navbarbuttons">Login
+                    </Button></Link>) :
                     <>
+                        {admin && adminNav}
                         <Link
-                            id="addNewClinic"
+                            id="appointments"
                             to={{
-                                pathname: '/clinic',
+                                pathname: '/bookedAppointments',
                             }}
-                        ><Button className="mr-sm-2 navbarbuttons">New Clinic
-                        </Button>
-                        </Link>
-                        <Link
-                            id="addNewClinic"
-                            to={{
-                                pathname: '/disease',
-                            }}
-                        ><Button className="mr-sm-2 navbarbuttons">New Disease
-                        </Button>
-                        </Link>
-                        <Link
-                            id="addNewClinic"
-                            to={{
-                                pathname: '/vaccine',
-                            }}
-                        ><Button className="mr-sm-2 navbarbuttons">New Vaccine
+                        ><Button className="mr-sm-2 navbarbuttons">Appointments
                         </Button>
                         </Link>
                         <Link
@@ -88,14 +87,7 @@ const Navigationbar = () => {
                         ><Button className="mr-sm-2 navbarbuttons" onClick={handleLogout}>Logout
                         </Button>
                         </Link>
-                    </>):(<Link
-                            id="logout"
-                            to={{
-                                pathname: '/login',
-                            }}
-                        ><Button className="mr-sm-2 navbarbuttons" onClick={handleLogout}>Logout
-                        </Button>
-                        </Link>)}
+                    </>}
             </Nav>
         </>
     );

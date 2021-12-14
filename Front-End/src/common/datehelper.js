@@ -13,3 +13,11 @@ export function getDate(date) {
 export function getTime(date) {
     return date.toISOString().substr(12, 5);
 }
+
+export function toPstDate(date) {
+    return date.toLocaleDateString("en-US", {timeZone: "America/Los_Angeles"});
+}
+
+export function toPstTime(date) {
+    return date.toLocaleTimeString("en-US", {timeZone: "America/Los_Angeles"});
+}
