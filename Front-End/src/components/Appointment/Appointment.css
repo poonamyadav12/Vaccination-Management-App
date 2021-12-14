@@ -1,3 +1,7 @@
 .react-date-picker {
     background-color: wheat;
 }
+
+.react-date-picker input {
+    width: unset !important;
+}
