@@ -20,8 +20,6 @@ const BookedAppointments = () => {
 
     const time = useSelector(state => state.timeSlice.time);
 
-    const [futureAppointments, setFutureAppointments] = useState([]);
-    const [pastAppointments, setPastAppointments] = useState([]);
     const [radioButtonStatus, setRadioButtonStatus] = useState("upcoming")
     const appointments = useSelector(state => state.appointmentSlice.appointment);
 
@@ -30,18 +28,15 @@ const BookedAppointments = () => {
     }, [time])
 
     useEffect(() => {
-        if (appointments) {
-            const future = appointments.filter((appointment) => new Date(appointment.time) > time);
-            const past = appointments.filter((appointment) => new Date(appointment.time) <= time);
-            setRadioButtonStatus(future.length === 0 && past.length !== 0 ? "past" : "upcoming");
-            setFutureAppointments(future);
-            setPastAppointments(past);
-        }
+        // Reload
     }, [appointments])
 
     const onRadioButtonChange = (e) => {
         setRadioButtonStatus(e.target.value);
     }
+
+    const future = appointments?.filter((appointment) => new Date(appointment.time) > time);
+    const past = appointments?.filter((appointment) => new Date(appointment.time) <= time);
 
     return (
         <div>
@@ -54,7 +49,7 @@ const BookedAppointments = () => {
                             <h1 style={{textAlign: "left", marginTop: "10px", marginLeft: "10px"}}>Appointments</h1>
                         </Col>
                         <Col style={{flex: "0 1 10%", marginBottom: "20px"}}>
-                            <h1><MdPlaylistAdd size={50} color={"blue"} onClick={()=> navigate("/appointment")}/></h1>
+                            <h1><MdPlaylistAdd size={50} color={"blue"} onClick={() => navigate("/appointment")}/></h1>
                         </Col>
                     </Row>
                     <Radio.Group id="radio-group" onChange={onRadioButtonChange} value={radioButtonStatus}>
@@ -66,8 +61,8 @@ const BookedAppointments = () => {
                 <Row>
                     <div>
                         {radioButtonStatus === "upcoming" &&
-                        <Appointments type={"upcoming"} appointments={futureAppointments}/>}
-                        {radioButtonStatus === "past" && <Appointments type={"past"} appointments={pastAppointments}/>}
+                        <Appointments type={"upcoming"} appointments={future}/>}
+                        {radioButtonStatus === "past" && <Appointments type={"past"} appointments={past}/>}
                     </div>
                 </Row>
             </Container>
@@ -78,7 +73,7 @@ const BookedAppointments = () => {
 const Appointments = (props) => {
     return (
         <div>
-            {props.appointments.map((appointment) => {
+            {props.appointments?.map((appointment) => {
                     return (
                         <div key={appointment.id}>
                             <AppointmentItem type={props.type} appointment={appointment}/>
@@ -87,7 +82,7 @@ const Appointments = (props) => {
                     )
                 }
             )}
-            {props.appointments.length === 0 && <h6>No appointments available</h6>}
+            {props.appointments?.length === 0 && <h6>No appointments available</h6>}
         </div>
     )
 }
