@@ -1,18 +1,20 @@
 import React, {useEffect, useState} from "react";
-import {Container, Row} from "react-bootstrap";
+import {Col, Container, Row} from "react-bootstrap";
 import Navigationbar from "../Navigationbar/Navigationbar";
 import {Descriptions, Radio, Button} from 'antd';
 import './BookedAppointments.css';
 import {useDispatch, useSelector} from "react-redux";
 import {CheckinAppointments, GetAppointments} from "../../services";
-import {Navigate} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import {toPstDate, toPstTime} from "../../common/datehelper";
-import {GiCheckMark, ImCheckboxChecked, ImClock, ImCross} from "react-icons/all";
+import {GiCheckMark, ImCheckboxChecked, ImClock, ImCross, ImPlus, MdPlaylistAdd} from "react-icons/all";
 import ReactTooltip from "react-tooltip";
 import {appointmentSliceActions} from "../../store/apptSlice";
 
 const BookedAppointments = () => {
     const dispatch = useDispatch();
+
+    const navigate = useNavigate();
 
     const user = useSelector(state => state.userSlice.user);
 
@@ -47,7 +49,14 @@ const BookedAppointments = () => {
             <Navigationbar/>
             <Container>
                 <Row style={{textAlign: "left"}}>
-                    <h1 style={{textAlign: "left", marginTop: "10px", marginLeft: "10px"}}>Appointments Information</h1>
+                    <Row style={{display: "flex", alignItems: "baseline"}}>
+                        <Col style={{flex: "0 1 20%"}}>
+                            <h1 style={{textAlign: "left", marginTop: "10px", marginLeft: "10px"}}>Appointments</h1>
+                        </Col>
+                        <Col style={{flex: "0 1 10%", marginBottom: "20px"}}>
+                            <h1><MdPlaylistAdd size={50} color={"blue"} onClick={()=> navigate("/appointment")}/></h1>
+                        </Col>
+                    </Row>
                     <Radio.Group id="radio-group" onChange={onRadioButtonChange} value={radioButtonStatus}>
                         <Radio className="radio-buttons" value="upcoming">Upcoming appointments</Radio>
                         <Radio className="radio-buttons" value="past">Past appointments</Radio>
