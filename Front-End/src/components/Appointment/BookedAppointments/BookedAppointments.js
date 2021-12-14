@@ -5,11 +5,12 @@ import Navigationbar from "../../Navigationbar/Navigationbar";
 import {Descriptions, Radio, Button} from 'antd';
 import './BookedAppointments.css';
 import {useDispatch, useSelector} from "react-redux";
-import {GetAppointments} from "../../../services";
+import {CheckinAppointments, GetAppointments} from "../../../services";
 import {Navigate} from "react-router-dom";
-import {isGreaterThan, isLessThan} from "../../../common/datehelper";
-import {ImCheckboxChecked, ImClock, ImCross, ImHistory} from "react-icons/all";
+import {isGreaterThan, isLessThan, toPstDate, toPstTime} from "../../../common/datehelper";
+import {GiCheckMark, ImCheckboxChecked, ImCheckmark, ImClock, ImCross, ImHistory} from "react-icons/all";
 import ReactTooltip from "react-tooltip";
+import {appointmentSliceActions} from "../../../store/apptSlice";
 
 const BookedAppointments = () => {
     const dispatch = useDispatch();
@@ -81,13 +82,39 @@ const Appointments = (props) => {
 }
 
 const AppointmentItem = (props) => {
+
+    const user = useSelector(state => state.userSlice.user);
+    const time = useSelector(state => state.timeSlice.time);
+    const checkinSuccess = useSelector(state => state.appointmentSlice.checkinSuccess);
+    // const [checkInStatus, setCheckin] = useState(props.appointment.checkInStatus);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(GetAppointments(user.email));
+    }, [checkinSuccess])
+
+    const checkInFunc = (e) => {
+        e.preventDefault();
+        appointmentSliceActions.setCheckinSuccess(false);
+        dispatch(CheckinAppointments(`?appointmentId=${props.appointment.id}`));
+    }
+
     const checkIn = props.type === "upcoming" ?
-        (props.appointment.checkInStatus==false ?
+        (props.appointment.checkInStatus ?
             <ImCheckboxChecked data-tip data-for='upcoming' color={"blue"} size={18}/> :
             <ImClock data-tip data-for='upcomingNoCheckin' color={"blue"} size={18}/>)
         : (props.appointment.checkInStatus ?
             <ImCheckboxChecked data-tip data-for='checkedIn' color={"green"} size={18}/> :
             <ImCross data-tip data-for='noShow' color={"red"} size={18}/>);
+
+    const checkInButton = props.type === "upcoming"
+        && !props.appointment.checkInStatus
+        // If time is within next 24 hours, allow checkin
+        && new Date(props.appointment.time) - time < 24 * 3600 * 1000 &&
+        <Button style={{backgroundColor: "wheat"}} onClick={checkInFunc}><GiCheckMark color={"green"}
+                                                                                      size={20}/>Check-in</Button>;
+
     return (
         <div>
             <ReactTooltip id='checkedIn' type='success'>
@@ -107,9 +134,12 @@ const AppointmentItem = (props) => {
                 size="default"
                 labelStyle={{backgroundColor: "#3F4045", color: "white"}}
             >
-                <Descriptions.Item label="Clinic">{props.appointment.clinic.name}{' '}{checkIn}</Descriptions.Item>
-                <Descriptions.Item label="Date">{new Date(props.appointment.time).toDateString()}</Descriptions.Item>
-                <Descriptions.Item label="Time">{new Date(props.appointment.time).toTimeString()}</Descriptions.Item>
+                <Descriptions.Item
+                    label="Clinic">{props.appointment.clinic.name}{' '}{checkIn}{' '}{checkInButton}</Descriptions.Item>
+                <Descriptions.Item
+                    label="Date">{toPstDate(new Date(props.appointment.time))}</Descriptions.Item>
+                <Descriptions.Item
+                    label="Time">{toPstTime(new Date(props.appointment.time))}</Descriptions.Item>
                 <Descriptions.Item label="Vaccines">
                     {props.appointment.vaccines.map((vaccine) => {
                         return (
