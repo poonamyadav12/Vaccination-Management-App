@@ -119,11 +119,11 @@ public class AppointmentController {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "Difference Between Current Time And Appointment Time Is Greater Than 24Hrs");
         }
         System.out.println("diff"+diff);
-        /* if (appointment.isCheckInStatus()) {
+        if (appointment.isCheckInStatus()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "Already Checked In");
         }
         appointment.setCheckInStatus(true);
-        appointmentRepository.save(appointment); */
+        appointmentRepository.save(appointment);
         return ResponseEntity.ok("Checked In");
     }
 }
