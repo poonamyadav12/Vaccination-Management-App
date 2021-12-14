@@ -70,7 +70,7 @@ const Navigationbar = () => {
                     ><Button className="mr-sm-2 navbarbuttons">Login
                     </Button></Link>) :
                     <>
-                        {!admin && adminNav}
+                        {admin && adminNav}
                         <Link
                             id="appointments"
                             to={{
