@@ -21,6 +21,7 @@
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.0.2",
     "react-scripts": "4.0.3",
+    "react-select": "^5.2.1",
     "react-time-select": "^3.0.0",
     "redux": "^4.1.2",
     "redux-firestore": "^0.15.0",

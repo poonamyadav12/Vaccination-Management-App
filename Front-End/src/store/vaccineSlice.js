@@ -28,10 +28,10 @@ const vaccineSlice = createSlice({
     [GetDueVaccines.fulfilled]: (state, action) => {
       state.dueVaccines = action.payload;
       state.isSuccess = true;
-  },
-  [GetDueVaccines.rejected]: (state, action) => {
+    },
+    [GetDueVaccines.rejected]: (state, action) => {
       state.error = action.payload;
-  },
+    },
   },
 });
 

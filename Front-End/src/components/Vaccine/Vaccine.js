@@ -7,6 +7,7 @@ import { CreateVaccine, GetDisease } from "../../services";
 import { vaccineSliceActions } from "../../store/vaccineSlice";
 import { Navigate } from "react-router-dom";
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
+import Select from "react-select";
 import axios from "axios";
 
 const Vaccine = () => {
@@ -14,7 +15,7 @@ const Vaccine = () => {
 
   const user = useSelector((state) => state.userSlice.user);
 
-  //const disease = useSelector((state) => state.diseaseSlice.disease);
+  const disease = useSelector((state) => state.diseaseSlice.disease);
 
   const error = useSelector((state) => state.vaccineSlice.error);
 
@@ -47,10 +48,10 @@ const Vaccine = () => {
 
   const [vaccine, setVaccine] = useState({
     name: "",
-    disease: {},
+    diseases: [],
     manufacturer: "",
-    number_of_shots: "",
-    shot_interval_val: "",
+    numberOfShots: "",
+    shotIntervalVal: "",
     duration: "",
   });
 
@@ -61,16 +62,34 @@ const Vaccine = () => {
     //Add Create Vaccine
     debugger;
     e.preventDefault();
-    dispatch(CreateVaccine(vaccine));
-    dispatch(vaccineSliceActions.setError(""));
+    //dispatch(CreateVaccine(vaccine));
+    //dispatch(vaccineSliceActions.setError(""));
+
+    axios
+      .post(`http://localhost:8080/vaccine`, vaccine)
+      .then((data) => {
+        debugger;
+        if (data.status == 200) {
+          debugger;
+        } else {
+          debugger;
+        }
+      })
+      .catch((err) => {
+        debugger;
+        console.log(err);
+      });
   };
 
-  const onChange = (e) => {
+  const onDiseaseChange = (diseases) => {
     //Add Create Vaccine
     debugger;
+    diseases.forEach((element) => {
+      vaccine.diseases = [...vaccine.diseases, element.value];
+    });
   };
 
-  const getAllDiseases = () => {
+  const getAllDiseases = async () => {
     debugger;
     axios
       .get(`http://localhost:8080/disease`)
@@ -132,13 +151,33 @@ const Vaccine = () => {
                   </Form.Group>
                   <Form.Group className="loginbox" controlId="formEmail">
                     <Form.Label>Disease</Form.Label>
-                    <DropdownMultiselect
-                      handleOnChange={onChange}
+                    <Select
+                      closeMenuOnSelect={false}
                       options={diseases.map((e) => ({
                         label: e.name,
-                        key: e.diseaseId,
+                        value: e.diseaseId,
                       }))}
-                    ></DropdownMultiselect>
+                      isMulti
+                      onChange={onDiseaseChange}
+                    />
+                    {/* <DropdownMultiselect
+                      handleOnChange={onDiseaseChange}
+                      options={optionsArray}
+                    ></DropdownMultiselect> */}
+                    {/* <Form.Control
+                      type="text"
+                      name="disease"
+                      onChange={onDiseaseChange}
+                      as="select"
+                      required
+                      multiple={true}
+                    >
+                      {diseases.map((disease) => (
+                        <option key={disease.diseaseId} value={disease.name}>
+                          {disease.name}
+                        </option>
+                      ))}
+                    </Form.Control> */}
                   </Form.Group>
                   <Form.Group className="loginbox" controlId="formPassword">
                     <Form.Label>Enter Vaccine Manufacturer</Form.Label>
@@ -162,7 +201,7 @@ const Vaccine = () => {
                       onChange={(e) =>
                         setVaccine({
                           ...vaccine,
-                          number_of_shots: e.target.value,
+                          numberOfShots: e.target.value,
                         })
                       }
                     />
@@ -177,7 +216,7 @@ const Vaccine = () => {
                       onChange={(e) =>
                         setVaccine({
                           ...vaccine,
-                          shot_interval_val: e.target.value,
+                          shotIntervalVal: e.target.value,
                         })
                       }
                     />
