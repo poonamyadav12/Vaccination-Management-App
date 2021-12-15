@@ -32,7 +32,8 @@ function App() {
         <div className="App">
             <Suspense fallback={<div className="centered">Loading...</div>}>
                 <Routes>
-                    <Route exact path="/" element={<Dashboard/>}/>
+                    <Route exact path="/" element={<LandingPage/>}/>
+                    <Route path="/home" element={<Dashboard/>}/>
                     <Route path="/signup" element={<SignupStart/>}/>
                     <Route path="/signupContinue" element={<Signup/>}/>
                     <Route path="/login" element={<Login/>}/>
@@ -40,7 +41,7 @@ function App() {
                     <Route path="/disease" element={<Disease/>}/>
                     <Route path="/vaccine" element={<Vaccine/>}/>
                     <Route path="/appointment" element={<Appointment/>}/>
-                    <Route path="/bookedappointments" element={<BookedAppointments />} />
+                    <Route path="/bookedappointments" element={<BookedAppointments/>}/>
                 </Routes>
             </Suspense>
         </div>

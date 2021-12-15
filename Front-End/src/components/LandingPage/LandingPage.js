@@ -3,11 +3,18 @@ import {
     Container, Row, Col, Figure,
 } from 'react-bootstrap';
 import './LandingPage.css'
+import {Navigate} from "react-router-dom";
+import React from "react";
+import {useSelector} from "react-redux";
 
 const LandingPage = () => {
+
+    const user = useSelector(state => state.userSlice.user);
+
     return (
         <div>
-            <Navigationbar />
+            {user && <Navigate to='/home'/>}
+            <Navigationbar/>
             <div className="container">
                 <div className="description">
                     <Container>
@@ -16,9 +23,9 @@ const LandingPage = () => {
                                 <Col>
                                     <div id="landingpagecaption">
                                         <h1> Now loading: </h1>
-                                        <br />
+                                        <br/>
                                         <h1>Antibodies…</h1>
-                                        <br />
+                                        <br/>
                                     </div>
                                 </Col>
                                 <Col>

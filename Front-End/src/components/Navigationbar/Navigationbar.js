@@ -57,7 +57,7 @@ const Navigationbar = () => {
             {user && <DateTimePicker
                 onChange={onDateChange}
                 value={time}
-                minDate={currentDate}
+                // minDate={currentDate}
                 maxDate={maxDate}
             />}
             <Nav className="ml-auto">

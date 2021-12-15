@@ -2,6 +2,7 @@ package edu.sjsu.cmpe275.controller;
 
 import edu.sjsu.cmpe275.common.DateUtil;
 import edu.sjsu.cmpe275.common.Error;
+import edu.sjsu.cmpe275.common.SendEmail;
 import edu.sjsu.cmpe275.dto.AppointmentOptions;
 import edu.sjsu.cmpe275.model.*;
 import edu.sjsu.cmpe275.repository.AppointmentRepository;
@@ -107,6 +108,8 @@ public class AppointmentController {
         Appointment appointment = new Appointment(bookingDateTime, userOpt.get(), clinicOpt.get());
         appointment.addVaccine(vaccineOpt.get());
         appointmentRepository.save(appointment);
+        User user = userOpt.get();
+        SendEmail.send(user.getEmail(), "Appointment booked", String.format("Hi %s,<br/> You appointment is booked at %s on %s. Please checkin before 24 hours.", user.getFirstname(), appointment.getClinic().getName(), appointment.getTime()));
         return ResponseEntity.ok("Success");
     }
 
@@ -115,12 +118,16 @@ public class AppointmentController {
     ResponseEntity<?> deleteAppointment(@RequestParam("appointmentID") Long appointmentID) {
 
         System.out.println(appointmentID);
-        boolean exists = appointmentRepository.existsById(appointmentID);
-        if (!exists) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentID);
+        if (appointmentOpt.isEmpty()) {
             throw new IllegalStateException("Appointment ID doesn't exists " + appointmentID);
         }
+
         appointmentRepository.deleteById(appointmentID);
 
+        Appointment appointment = appointmentOpt.get();
+        User user = appointment.getUser();
+        SendEmail.send(user.getEmail(), "Appointment cancelled", String.format("Hi %s,<br/> You appointment at %s on %s is cancelled.", user.getFirstname(), appointment.getClinic().getName(), appointment.getTime()));
         return ResponseEntity.ok("Successfully Deleted Appointment");
     }
 
@@ -152,6 +159,8 @@ public class AppointmentController {
         }
         appointment.setCheckInStatus(true);
         appointmentRepository.save(appointment);
+        User user = appointment.getUser();
+        SendEmail.send(user.getEmail(), "Appointment checked-in", String.format("Hi %s,<br/> You appointment at %s on %s is checked-in. Please reach 5 minutes before the actual time to complete the documentation.", user.getFirstname(), appointment.getClinic().getName(), appointment.getTime()));
         return ResponseEntity.ok("Checked In");
     }
 }
