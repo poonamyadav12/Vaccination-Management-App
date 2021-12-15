@@ -135,6 +135,7 @@ public class VaccineController {
             }
         }
 
+        dto.sortEntries();
         return ResponseEntity.ok(dto);
     }
 
