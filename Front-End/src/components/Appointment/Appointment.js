@@ -32,6 +32,12 @@ const Appointment = () => {
         dispatch(GetSlots(`${user.email}/${getDate(selectedDate)}`));
     }, [selectedDate, initialTime])
 
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 365);
+
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() - 2);
+
     return (
         <div>
             {!user && <Navigate to='/'/>}
@@ -59,6 +65,8 @@ const Appointment = () => {
                                             <h5><DatePicker
                                                 onChange={onDateChange}
                                                 value={selectedDate}
+                                                minDate={currentDate}
+                                                maxDate={maxDate}
                                             /></h5>
                                         </Col>
                                     </Row>
