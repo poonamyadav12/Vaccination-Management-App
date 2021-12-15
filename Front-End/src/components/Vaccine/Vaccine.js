@@ -60,34 +60,48 @@ const Vaccine = () => {
 
   const onSubmit = (e) => {
     //Add Create Vaccine
-    debugger;
     e.preventDefault();
-    axios
-      .post(`http://localhost:8080/vaccine`, vaccine)
-      .then((data) => {
-        if (data.status == 200) {
-          toast.success("Vaccine added successfully", {
-            position: "top-left",
-            closeOnClick: true,
-            delay: 1,
-          });
-        } else {
-          toast.success("Error in Vaccine Creation", {
-            position: "top-left",
-            closeOnClick: true,
-            delay: 1,
-          });
-        }
-      })
-      .catch((err) => {
-        debugger;
-        console.log(err);
-        toast.success("Error in Vaccine Creation", {
-          position: "top-left",
-          closeOnClick: true,
-          delay: 1,
-        });
+
+    if (vaccine.diseasesIds.length === 0) {
+      toast.error("Add a disease associated to the vaccine.", {
+        position: "top-left",
+        closeOnClick: true,
+        delay: 1,
       });
+    }else if(vaccine.numberOfShots<1){
+      toast.error("Number of shots can not be less than 1.", {
+        position: "top-left",
+        closeOnClick: true,
+        delay: 1,
+      });
+    } 
+    else {
+      axios
+        .post(`http://localhost:8080/vaccine`, vaccine)
+        .then((data) => {
+          if (data.status == 200) {
+            toast.success("Vaccine added successfully", {
+              position: "top-left",
+              closeOnClick: true,
+              delay: 1,
+            });
+          } else {
+            toast.error("Error in Vaccine Creation", {
+              position: "top-left",
+              closeOnClick: true,
+              delay: 1,
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Error in Vaccine Creation", {
+            position: "top-left",
+            closeOnClick: true,
+            delay: 1,
+          });
+        });
+    }
   };
 
   const onDiseaseChange = (diseases) => {
@@ -167,7 +181,7 @@ const Vaccine = () => {
                   <Form.Group className="loginbox" controlId="formPassword">
                     <Form.Label>Number of Shots</Form.Label>
                     <Form.Control
-                      type="text"
+                      type="number"
                       name="numShots"
                       placeholder="Number of Shots"
                       required
@@ -177,32 +191,45 @@ const Vaccine = () => {
                           numberOfShots: e.target.value,
                         })
                       }
+                      onKeyDown={(evt) =>
+                        ["e", "E", "+", "-"].includes(evt.key) &&
+                        evt.preventDefault()
+                      }
                     />
                   </Form.Group>
                   <Form.Group className="loginbox" controlId="formPassword">
                     <Form.Label>Shot Interval</Form.Label>
                     <Form.Control
-                      type="text"
+                      type="number"
                       name="shotInterval"
                       placeholder="Shot Interval"
                       required
+                      disabled={vaccine.numberOfShots<=1?true:false}
                       onChange={(e) =>
                         setVaccine({
                           ...vaccine,
                           shotIntervalVal: e.target.value,
                         })
                       }
+                      onKeyDown={(evt) =>
+                        ["e", "E", "+", "-"].includes(evt.key) &&
+                        evt.preventDefault()
+                      }
                     />
                   </Form.Group>
                   <Form.Group className="loginbox" controlId="formPassword">
                     <Form.Label>Vaccine Validity</Form.Label>
                     <Form.Control
-                      type="text"
+                      type="number"
                       name="manufacturer"
                       placeholder="Vaccine Validity"
                       required
                       onChange={(e) =>
                         setVaccine({ ...vaccine, duration: e.target.value })
+                      }
+                      onKeyDown={(evt) =>
+                        ["e", "E", "+", "-"].includes(evt.key) &&
+                        evt.preventDefault()
                       }
                     />
                   </Form.Group>
