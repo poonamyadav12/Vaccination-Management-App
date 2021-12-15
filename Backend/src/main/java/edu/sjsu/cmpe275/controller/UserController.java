@@ -59,7 +59,7 @@ public class UserController {
         Date to = parseDateTime(toDate);
         List<Appointment> appointmentsFiltered = appointments.stream().filter(appt -> appt.getTime().getTime() >= from.getTime() && appt.getTime().getTime() < to.getTime()).collect(Collectors.toList());
         int noShow = 0;
-        int rate = 0;
+        float rate = 0;
         for (Appointment appt : appointmentsFiltered) {
             boolean checkinStatus = appt.isCheckInStatus();
             if (!checkinStatus && appt.getTime().getTime() < currentTimeDate.getTime()) {
@@ -67,7 +67,7 @@ public class UserController {
             }
         }
         if (!appointmentsFiltered.isEmpty()) {
-            rate = noShow / appointmentsFiltered.size();
+            rate =(float) noShow / appointmentsFiltered.size();
         }
         responseMap.put("total", appointmentsFiltered.size());
         responseMap.put("noShow", noShow);
