@@ -102,6 +102,21 @@ public class AppointmentController {
         return ResponseEntity.ok("Success");
     }
 
+    @PostMapping(value = "appointment/delete")
+    @Transactional
+    ResponseEntity<?> deleteAppointment(@RequestParam("appointmentID") Long appointmentID) {
+
+        System.out.println(appointmentID);
+        boolean exists = appointmentRepository.existsById(appointmentID);
+        if (!exists) {
+            throw new IllegalStateException("Appointment ID doesn't exists " + appointmentID);
+        }
+        appointmentRepository.deleteById(appointmentID);
+
+        return ResponseEntity.ok("Successfully Deleted Appointment");
+    }
+
+
     @GetMapping(value = "/appointments/{emailId}", produces = {"application/json"})
     ResponseEntity<?> getAppointments(@PathVariable String emailId) {
         Optional<User> userOpt = userRepository.findUserByEmail(emailId);
