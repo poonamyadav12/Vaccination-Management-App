@@ -11,7 +11,7 @@ import {GiCheckMark, ImCheckboxChecked, ImClock, ImCross, ImPlus, MdPlaylistAdd}
 import ReactTooltip from "react-tooltip";
 import {appointmentSliceActions} from "../../store/apptSlice";
 
-const BookedAppointments = () => {
+const BookedAppointments = (props) => {
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
@@ -46,7 +46,9 @@ const BookedAppointments = () => {
                 <Row style={{textAlign: "left"}}>
                     <Row style={{display: "flex", alignItems: "baseline"}}>
                         <Col style={{flex: "0 1 20%"}}>
-                            <h1 style={{textAlign: "left", marginTop: "10px", marginLeft: "10px"}}>Appointments</h1>
+                            {/*{props?.dashboard ?*/}
+                                <h1 style={{textAlign: "left", marginTop: "10px", marginLeft: "10px"}}>Appointments</h1>
+                                 {/*: <h1 style={{textAlign: "left", marginTop: "10px", marginLeft: "10px"}}>Dashboard</h1>}*/}
                         </Col>
                         <Col style={{flex: "0 1 10%", marginBottom: "20px"}}>
                             <h1><MdPlaylistAdd size={50} color={"blue"} onClick={() => navigate("/appointment")}/></h1>
