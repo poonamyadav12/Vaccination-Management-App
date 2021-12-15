@@ -14,10 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -35,9 +32,15 @@ public class AppointmentController {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
-    @GetMapping(value = "/appointmentSlots/{selectedDate}", produces = {"application/json"})
+    @GetMapping(value = "/appointmentSlots/{email}/{selectedDate}", produces = {"application/json"})
     ResponseEntity<?> getAppointmentSlots(@RequestParam("time") String currentTimeStr,
-                                          @PathVariable("selectedDate") String selectedDateStr) {
+                                          @PathVariable("selectedDate") String selectedDateStr,
+                                          @PathVariable String email) {
+        Optional<User> userOpt = userRepository.findUserByEmail(email);
+        if (userOpt.isEmpty()) {
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "Invalid user ID ", email);
+        }
+        User user = userOpt.get();
         Date currentTimeDt = parseDateTime(currentTimeStr);
         Date selectedDate = parseDate(selectedDateStr);
         if (selectedDate.before(atStartOfDay(currentTimeDt))) {
@@ -48,6 +51,7 @@ public class AppointmentController {
         }
         List<Clinic> clinics = clinicRepository.findAll();
 
+        Set<Date> userAppointments = user.getAppointments().stream().map(Appointment::getTime).collect(Collectors.toSet());
         AppointmentOptions options = new AppointmentOptions();
         for (Clinic clinic : clinics) {
             List<Appointment> bookedAppointments = clinic.getAppointments();
@@ -67,6 +71,10 @@ public class AppointmentController {
             // Create appointment slots at 15 minutes apart.
             for (int minute = (int) Math.ceil(startMinutes / 15.0) * 15; minute < closeMinutes; minute += 15) {
                 Date date = addMinutes(selectedDate, minute);
+                // If this time is already booked by the same user, don't show it again.
+                if (userAppointments.contains(date)) {
+                    continue;
+                }
                 Long alreadyBooked = appointmentsByTime.getOrDefault(date, 0L);
                 if (alreadyBooked < clinic.getNumberOfPhysicians()) {
                     slot.addTime(formatDateTime(date));
