@@ -40,6 +40,23 @@ public class VaccineInfoDTO {
         this.pastVaccines.add(pastVaccine);
     }
 
+    public void sortEntries() {
+        sortEntries(this.pastVaccines, -1);
+        sortEntries(this.upcomingVaccines, 1);
+    }
+
+    public void sortEntries(List<VaccineInfo> vaccineInfos, int sortOrder) {
+        vaccineInfos.sort((c1, c2) -> {
+            if (!c1.getAppointments().isEmpty() && !c2.getAppointments().isEmpty()) {
+                return sortOrder * Long.compare(c1.getAppointments().get(0).getTime().getTime(), c2.getAppointments().get(0).getTime().getTime());
+            }
+            if (c1.getAppointments().isEmpty()) {
+                return 1;
+            }
+            return -1;
+        });
+    }
+
     public static class VaccineInfo {
 
         private List<Appointment> appointments;

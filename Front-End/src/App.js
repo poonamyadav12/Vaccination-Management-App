@@ -9,6 +9,7 @@ import SignupStart from "./components/Signup/SignupStart";
 import Disease from "./components/Disease/Disease";
 import Vaccine from "./components/Vaccine/Vaccine";
 import Appointment from "./components/Appointment/Appointment";
+import Dashboard from "./components/Dashboard/Dashboard";
 
 const LandingPage = React.lazy(() =>
     import("./components/LandingPage/LandingPage")
@@ -25,12 +26,13 @@ axios.defaults.params = {}
 const time = localStorage.getItem("currentTime");
 axios.defaults.params['time'] = time ? new Date(time) : new Date();
 
+
 function App() {
     return (
         <div className="App">
             <Suspense fallback={<div className="centered">Loading...</div>}>
                 <Routes>
-                    <Route exact path="/" element={<LandingPage/>}/>
+                    <Route exact path="/" element={<Dashboard/>}/>
                     <Route path="/signup" element={<SignupStart/>}/>
                     <Route path="/signupContinue" element={<Signup/>}/>
                     <Route path="/login" element={<Login/>}/>

@@ -6,3 +6,4 @@ export const CreateVaccine = createPostThunk(
 );
 
 export const GetDueVaccines = createGetThunk("vaccine/due",`/vaccine/due/`)
+export const GetVaccinesInfo = createGetThunk("vaccine/allInfo",`/vaccine/allInfo/`)
