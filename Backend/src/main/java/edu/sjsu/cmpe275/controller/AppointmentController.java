@@ -19,10 +19,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.TransactionRequiredException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+<<<<<<< Updated upstream
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+=======
+>>>>>>> Stashed changes
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -135,7 +138,7 @@ public class AppointmentController {
 
         Appointment appointment = appointmentOpt.get();
         User user = appointment.getUser();
-        SendEmail.send(user.getEmail(), "Appointment cancelled", String.format("Hi %s,<br/> You appointment at %s on %s is cancelled.", user.getFirstname(), appointment.getClinic().getName(), appointment.getTime()));
+        SendEmail.send(user.getEmail(), "Appointment cancelled", String.format("Hi %s,<br/> Your appointment at %s on %s is cancelled.", user.getFirstname(), appointment.getClinic().getName(), appointment.getTime()));
         return ResponseEntity.ok("Successfully Deleted Appointment");
     }
 
@@ -145,8 +148,8 @@ public class AppointmentController {
         System.out.println(appointmentID);
         System.out.println(updatedTime);
 
-        boolean exists = appointmentRepository.existsById(appointmentID);
-        if (!exists) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentID);
+        if (appointmentOpt.isEmpty()) {
             throw new IllegalStateException("Appointment ID doesn't exists " + appointmentID);
         }
 
@@ -160,6 +163,10 @@ public class AppointmentController {
         System.out.println(updateTime1);
 
         Optional<Integer> status = appointmentRepository.updateAppointment(appointmentID, updateTime1);
+
+        Appointment appointment = appointmentOpt.get();
+        User user = appointment.getUser();
+        SendEmail.send(user.getEmail(), "Appointment Updated", String.format("Hi %s,<br/> Your appointment at %s on %s is updated.", user.getFirstname(), appointment.getClinic().getName(), appointment.getTime()));
 
         return ResponseEntity.ok("Successfully Updated Appointment");
     }
