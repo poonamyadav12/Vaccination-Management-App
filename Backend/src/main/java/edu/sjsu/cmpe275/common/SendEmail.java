@@ -4,7 +4,6 @@ package edu.sjsu.cmpe275.common;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
-import javax.activation.*;
 
 public class SendEmail {
     public static void send(String to, String subject, String body) {
