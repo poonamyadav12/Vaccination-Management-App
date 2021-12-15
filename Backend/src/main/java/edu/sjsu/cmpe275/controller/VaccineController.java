@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static edu.sjsu.cmpe275.common.DateUtil.atStartOfDay;
 import static edu.sjsu.cmpe275.common.DateUtil.parseDateTime;
 
 @RestController
@@ -39,19 +40,38 @@ public class VaccineController {
     }
 
     @GetMapping(value = "/vaccine/due/{emailId}", produces = {"application/json"})
-    public ResponseEntity<?> getDueVaccine(@PathVariable String emailId, @RequestParam String bookingDateTime) {
+    public ResponseEntity<?> getDueVaccine(@PathVariable String emailId, @RequestParam("bookingDateTime") String bookingDateTimeStr) {
         Optional<User> userOpt = userRepository.findUserByEmail(emailId);
         if (userOpt.isEmpty()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "Invalid user ID ", emailId);
         }
         User user = userOpt.get();
-        Map<String, Long> alreadyTakenVaccines = user.getAppointments()
+        List<Appointment> appointments = user.getAppointments();
+        Map<String, Long> alreadyTakenVaccines = appointments
                 .stream().flatMap(appt -> appt.getVaccines().stream())
                 .collect(Collectors.groupingBy(Vaccine::getVaccineId, Collectors.counting()));
+
+        Map<String, Date> maxAppointmentTime = new HashMap<>();
+        for (Appointment appointment : appointments) {
+            for (Vaccine v : appointment.getVaccines()) {
+                maxAppointmentTime.compute(v.getVaccineId(), (key, val) -> {
+                    if (val == null) return appointment.getTime();
+                    if (val.getTime() > appointment.getTime().getTime()) {
+                        return val;
+                    }
+                    return appointment.getTime();
+                });
+            }
+        }
+
+        Date bookingDateTime = parseDateTime(bookingDateTimeStr);
         List<Vaccine> allVaccines = vaccineRepository.findAll();
         List<Vaccine> dueVaccines = allVaccines.stream()
-                .filter(vaccine ->
-                        alreadyTakenVaccines.getOrDefault(vaccine.getVaccineId(), 0L) < vaccine.getNumberOfShots())
+                .filter(vaccine -> {
+                    // If the shots are due and interval between subsequent doses have elapsed.
+                    return alreadyTakenVaccines.getOrDefault(vaccine.getVaccineId(), 0L) < vaccine.getNumberOfShots()
+                            && (vaccine.getShotIntervalVal() == null || atStartOfDay(bookingDateTime).getTime() / 1000 - atStartOfDay(maxAppointmentTime.getOrDefault(vaccine.getVaccineId(), new Date(0))).getTime() / 1000 > vaccine.getShotIntervalVal() * 24 * 3600);
+                })
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dueVaccines);
     }

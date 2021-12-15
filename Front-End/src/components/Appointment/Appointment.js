@@ -9,7 +9,6 @@ import {getDate} from "../../common/datehelper";
 import "./Appointment.css";
 import {GetSlots} from "../../services";
 import {ClinicAppointment} from "./ClinicAppointment";
-import {appointmentSliceActions} from "../../store/apptSlice";
 
 const Appointment = () => {
 
@@ -30,7 +29,7 @@ const Appointment = () => {
     }
 
     useEffect(() => {
-        dispatch(GetSlots(getDate(selectedDate)));
+        dispatch(GetSlots(`${user.email}/${getDate(selectedDate)}`));
     }, [selectedDate, initialTime])
 
     return (

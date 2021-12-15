@@ -22,7 +22,7 @@ export const BookModal = (props) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        dispatch(GetDueVaccines(user.email,`?bookingDateTime=${new Date(props.time)}`));
+        dispatch(GetDueVaccines(`${user.email}?bookingDateTime=${props.time}`));
         return () => {
             dispatch(appointmentSliceActions.setCreateAppointmentSuccess(false));
             dispatch(vaccineSliceActions.clearDueVaccines(null));
