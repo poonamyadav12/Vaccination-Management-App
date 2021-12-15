@@ -10,12 +10,19 @@ import edu.sjsu.cmpe275.repository.ClinicRepository;
 import edu.sjsu.cmpe275.repository.UserRepository;
 import edu.sjsu.cmpe275.repository.VaccineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import javax.persistence.TransactionRequiredException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -129,6 +136,31 @@ public class AppointmentController {
         User user = appointment.getUser();
         SendEmail.send(user.getEmail(), "Appointment cancelled", String.format("Hi %s,<br/> You appointment at %s on %s is cancelled.", user.getFirstname(), appointment.getClinic().getName(), appointment.getTime()));
         return ResponseEntity.ok("Successfully Deleted Appointment");
+    }
+
+    @PostMapping(value = "appointment/update")
+    ResponseEntity<?> updateAppointment(@RequestParam("appointmentID") Long appointmentID, @RequestParam("updatedTime") String updatedTime) {
+
+        System.out.println(appointmentID);
+        System.out.println(updatedTime);
+
+        boolean exists = appointmentRepository.existsById(appointmentID);
+        if (!exists) {
+            throw new IllegalStateException("Appointment ID doesn't exists " + appointmentID);
+        }
+
+        Date updateTime1 = null;
+        try {
+            updateTime1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(updatedTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(updateTime1);
+
+        Optional<Integer> status = appointmentRepository.updateAppointment(appointmentID, updateTime1);
+
+        return ResponseEntity.ok("Successfully Updated Appointment");
     }
 
 
