@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Row, Dropdown } from "react-bootstrap";
+import { Col, Container, Row, ButtonGroup, Modal, Card } from "react-bootstrap";
+import DatePicker from "react-date-picker";
 import Navigationbar from "../Navigationbar/Navigationbar";
 import { Descriptions, Radio, Button } from "antd";
 import "./BookedAppointments.css";
 import { useDispatch, useSelector } from "react-redux";
-import { CheckinAppointments, GetAppointments } from "../../services";
+import { CheckinAppointments, GetAppointments, GetSlots } from "../../services";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toPstDate, toPstTime } from "../../common/datehelper";
 import {
@@ -20,6 +21,8 @@ import ReactTooltip from "react-tooltip";
 import { appointmentSliceActions } from "../../store/apptSlice";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import { getDate } from "../../common/datehelper";
+import { EditAppointment } from "./EditAppointment";
 
 const BookedAppointments = () => {
   const dispatch = useDispatch();
@@ -130,16 +133,31 @@ const Appointments = (props) => {
 const AppointmentItem = (props) => {
   const user = useSelector((state) => state.userSlice.user);
   const time = useSelector((state) => state.timeSlice.time);
+  const slots = useSelector((state) => state.slotSlice.slots);
+  const [selectedDate, setSelectedDate] = useState(time);
+  let mySlots = slots
+    ? slots.appointments.filter(
+        (a) => a.clinic.id === props.appointment.clinic.id
+      )
+    : [];
   const checkinSuccess = useSelector(
     (state) => state.appointmentSlice.checkinSuccess
   );
   // const [checkInStatus, setCheckin] = useState(props.appointment.checkInStatus);
 
-  const dispatch = useDispatch();
+  const [render, setRender] = useState();
+  useEffect(() => {
+    dispatch(GetAppointments(user.email));
+  }, [render]);
 
+  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(GetAppointments(user.email));
   }, [checkinSuccess]);
+
+  useEffect(() => {
+    dispatch(GetSlots(getDate(selectedDate)));
+  }, [selectedDate]);
 
   const checkInFunc = (e) => {
     e.preventDefault();
@@ -147,13 +165,15 @@ const AppointmentItem = (props) => {
     dispatch(CheckinAppointments(`?appointmentId=${props.appointment.id}`));
   };
 
-  const [render, setRender] = useState();
-  useEffect(() => {
-    dispatch(GetAppointments(user.email));
-  }, [render]);
-
+  const [editMenu, setEditMenu] = useState(false);
   const editFunc = (e) => {
     console.log("Attempted to edit.");
+    console.log(mySlots);
+    setEditMenu(true);
+  };
+
+  const closeEditMenu = () => {
+    setEditMenu(false);
   };
 
   const deleteFunc = (e) => {
@@ -222,17 +242,43 @@ const AppointmentItem = (props) => {
     );
 
   const menu = props.type === "upcoming" && (
-    <div style={{"marginTop":"2vh"}}>
-      <Dropdown size="sm" drop="up">
-        <Dropdown.Toggle variant="secondary" id="dropdown-basic" >
-          <IoOptions /> Menu
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          <Dropdown.Item onClick={deleteFunc}>Delete</Dropdown.Item>
-          <Dropdown.Item onClick={editFunc}>Edit</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+    <div style={{ marginTop: "2vh" }}>
+      <ButtonGroup>
+        <Button onClick={deleteFunc} variant="danger" className="btn-danger">
+          Delete
+        </Button>
+        <Button onClick={editFunc} variant="primary" className="btn-primary">
+          Edit
+        </Button>
+      </ButtonGroup>
     </div>
+  );
+
+  const onDateChange = (date) => {
+    setSelectedDate(date);
+    mySlots = slots
+    ? slots.appointments.filter(
+        (a) => a.clinic.id === props.appointment.clinic.id
+      )
+    : [];
+  };
+
+  const modal = props.type === "upcoming" && (
+    <Modal show={editMenu} onHide={closeEditMenu}>
+      <Modal.Header closeButton>
+        <Modal.Title>Edit appointment</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <DatePicker onChange={onDateChange} value={selectedDate}/> <br />
+        {mySlots.length>0?(<EditAppointment appointment={mySlots[0]} closeModal={closeEditMenu} render={render} setRender={setRender}/>):(<h4><br/>No slots at the current time.</h4>)}
+        {/* {console.log(mySlots)} */}
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="danger" className="btn-danger" onClick={closeEditMenu}>
+          Close
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 
   return (
@@ -274,6 +320,7 @@ const AppointmentItem = (props) => {
             );
           })}
           {menu}
+          {modal}
         </Descriptions.Item>
       </Descriptions>
     </div>
