@@ -9,6 +9,7 @@ import { Navigate } from "react-router-dom";
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
 import Select from "react-select";
 import axios from "axios";
+import "./Vaccine.css";
 
 const Vaccine = () => {
   const dispatch = useDispatch();
@@ -48,7 +49,7 @@ const Vaccine = () => {
 
   const [vaccine, setVaccine] = useState({
     name: "",
-    diseases: [],
+    diseasesIds: [],
     manufacturer: "",
     numberOfShots: "",
     shotIntervalVal: "",
@@ -57,65 +58,55 @@ const Vaccine = () => {
 
   const [diseases, setDiseases] = useState([]);
 
-  //let diseases = [];
   const onSubmit = (e) => {
     //Add Create Vaccine
     debugger;
     e.preventDefault();
-    //dispatch(CreateVaccine(vaccine));
-    //dispatch(vaccineSliceActions.setError(""));
-
     axios
       .post(`http://localhost:8080/vaccine`, vaccine)
       .then((data) => {
-        debugger;
         if (data.status == 200) {
-          debugger;
+          toast.success("Vaccine added successfully", {
+            position: "top-left",
+            closeOnClick: true,
+            delay: 1,
+          });
         } else {
-          debugger;
+          toast.success("Error in Vaccine Creation", {
+            position: "top-left",
+            closeOnClick: true,
+            delay: 1,
+          });
         }
       })
       .catch((err) => {
         debugger;
         console.log(err);
+        toast.success("Error in Vaccine Creation", {
+          position: "top-left",
+          closeOnClick: true,
+          delay: 1,
+        });
       });
   };
 
   const onDiseaseChange = (diseases) => {
-    //Add Create Vaccine
-    debugger;
+    vaccine.diseasesIds = [];
     diseases.forEach((element) => {
-      vaccine.diseases = [...vaccine.diseases, element.value];
+      vaccine.diseasesIds.push(element.value);
     });
   };
 
   const getAllDiseases = async () => {
-    debugger;
     axios
       .get(`http://localhost:8080/disease`)
       .then((data) => {
-        debugger;
-        // const dropDownValue = data.data.map((response) => ({
-        //   key: response.diseaseId,
-        //   label: response.name,
-        // }));
         setDiseases(data.data);
-        //diseases = dropDownValue;
       })
       .catch((err) => {
-        debugger;
         console.log(err);
       });
   };
-
-  const optionsArray = [
-    { key: "au", label: "Australia" },
-    { key: "ca", label: "Canada" },
-    { key: "us", label: "USA" },
-    { key: "pl", label: "Poland" },
-    { key: "es", label: "Spain" },
-    { key: "fr", label: "France" },
-  ];
 
   return (
     <div>
@@ -160,24 +151,6 @@ const Vaccine = () => {
                       isMulti
                       onChange={onDiseaseChange}
                     />
-                    {/* <DropdownMultiselect
-                      handleOnChange={onDiseaseChange}
-                      options={optionsArray}
-                    ></DropdownMultiselect> */}
-                    {/* <Form.Control
-                      type="text"
-                      name="disease"
-                      onChange={onDiseaseChange}
-                      as="select"
-                      required
-                      multiple={true}
-                    >
-                      {diseases.map((disease) => (
-                        <option key={disease.diseaseId} value={disease.name}>
-                          {disease.name}
-                        </option>
-                      ))}
-                    </Form.Control> */}
                   </Form.Group>
                   <Form.Group className="loginbox" controlId="formPassword">
                     <Form.Label>Enter Vaccine Manufacturer</Form.Label>
