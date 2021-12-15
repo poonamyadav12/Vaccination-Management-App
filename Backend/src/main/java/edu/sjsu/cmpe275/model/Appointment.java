@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class Appointment {
+public class Appointment implements Comparable<Appointment> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -31,7 +31,7 @@ public class Appointment {
             inverseJoinColumns = @JoinColumn(name = "vaccineId"))
     private List<Vaccine> vaccines;
 
-    @Column(columnDefinition = "boolean default false",nullable = true)
+    @Column(columnDefinition = "boolean default false", nullable = true)
     private boolean checkInStatus;
 
     public Appointment(Date time, User user, Clinic clinic) {
@@ -85,8 +85,8 @@ public class Appointment {
         this.vaccines = vaccines;
     }
 
-    public void addVaccine(Vaccine vaccine){
-     this.vaccines.add(vaccine);
+    public void addVaccine(Vaccine vaccine) {
+        this.vaccines.add(vaccine);
     }
 
     public boolean isCheckInStatus() {
@@ -95,5 +95,11 @@ public class Appointment {
 
     public void setCheckInStatus(boolean checkInStatus) {
         this.checkInStatus = checkInStatus;
+    }
+
+    @Override
+    public int compareTo(Appointment o) {
+        if (o.getTime().equals(this.getTime())) return 0;
+        return o.getTime().getTime() - this.getTime().getTime() < 0 ? 1 : -1;
     }
 }

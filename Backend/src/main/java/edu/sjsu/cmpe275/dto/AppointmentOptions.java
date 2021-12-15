@@ -3,7 +3,6 @@ package edu.sjsu.cmpe275.dto;
 import edu.sjsu.cmpe275.model.Clinic;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class AppointmentOptions {

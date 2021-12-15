@@ -2,6 +2,7 @@ package edu.sjsu.cmpe275.controller;
 
 import edu.sjsu.cmpe275.common.Error;
 import edu.sjsu.cmpe275.dto.VaccineDTO;
+import edu.sjsu.cmpe275.dto.VaccineInfoDTO;
 import edu.sjsu.cmpe275.model.Appointment;
 import edu.sjsu.cmpe275.model.Disease;
 import edu.sjsu.cmpe275.model.User;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static edu.sjsu.cmpe275.common.DateUtil.parseDateTime;
 
 @RestController
 public class VaccineController {
@@ -36,7 +39,7 @@ public class VaccineController {
     }
 
     @GetMapping(value = "/vaccine/due/{emailId}", produces = {"application/json"})
-    public ResponseEntity<?> getDueVaccine(@PathVariable String emailId) {
+    public ResponseEntity<?> getDueVaccine(@PathVariable String emailId, @RequestParam String bookingDateTime) {
         Optional<User> userOpt = userRepository.findUserByEmail(emailId);
         if (userOpt.isEmpty()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "Invalid user ID ", emailId);
@@ -51,6 +54,88 @@ public class VaccineController {
                         alreadyTakenVaccines.getOrDefault(vaccine.getVaccineId(), 0L) < vaccine.getNumberOfShots())
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dueVaccines);
+    }
+
+    @GetMapping(value = "vaccine/allInfo/{emailId}", produces = {"application/json"})
+    public ResponseEntity<?> getAllDueVaccinesInfo(@PathVariable("emailId") String emailId, @RequestParam("time") String currentTimeStr) {
+        Date currentDateTime = parseDateTime(currentTimeStr);
+        Optional<User> userOpt = userRepository.findUserByEmail(emailId);
+        if (userOpt.isEmpty()) {
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "Invalid user ID ", emailId);
+        }
+        User user = userOpt.get();
+        List<Appointment> appointments = user.getAppointments();
+        List<Vaccine> allVaccines = vaccineRepository.findAll();
+
+        Map<String, List<Appointment>> appointmentsByVaccineId = new HashMap<>();
+        for (Appointment appt : appointments) {
+            for (Vaccine vaccine : appt.getVaccines()) {
+                if (!appointmentsByVaccineId.containsKey(vaccine.getVaccineId())) {
+                    appointmentsByVaccineId.put(vaccine.getVaccineId(), new ArrayList<>());
+                }
+                appointmentsByVaccineId.get(vaccine.getVaccineId()).add(appt);
+            }
+        }
+
+        VaccineInfoDTO dto = new VaccineInfoDTO();
+        for (Vaccine v : allVaccines) {
+            String id = v.getVaccineId();
+            List<Appointment> vaccineAppointments = appointmentsByVaccineId.getOrDefault(id, new ArrayList<>());
+            Collections.sort(vaccineAppointments);
+
+            int alreadyTakeShots = 0;
+            for (Appointment appointment : vaccineAppointments) {
+                if (appointment.getTime().getTime() - currentDateTime.getTime() < 0 && appointment.isCheckInStatus()) {
+                    alreadyTakeShots++;
+                }
+            }
+            VaccineInfoDTO.VaccineInfo pastVaccineInfo = null;
+            for (Appointment appointment : vaccineAppointments) {
+                // Skip for the future appointments.
+                if (appointment.getTime().getTime() - currentDateTime.getTime() >= 0) {
+                    continue;
+                }
+                if (pastVaccineInfo == null) {
+                    pastVaccineInfo = new VaccineInfoDTO.VaccineInfo();
+                }
+                pastVaccineInfo.setVaccineName(v.getName());
+                pastVaccineInfo.setShotsDue(v.getNumberOfShots() - alreadyTakeShots);
+                pastVaccineInfo.addAppointment(appointment);
+            }
+
+            VaccineInfoDTO.VaccineInfo futureVaccineInfo = null;
+            for (Appointment appointment : vaccineAppointments) {
+                // Skip for the past appointments.
+                if (appointment.getTime().getTime() - currentDateTime.getTime() < 0) {
+                    continue;
+                }
+                if (futureVaccineInfo == null) {
+                    futureVaccineInfo = new VaccineInfoDTO.VaccineInfo();
+                }
+                futureVaccineInfo.setVaccineName(v.getName());
+                futureVaccineInfo.setShotsDue(v.getNumberOfShots() - alreadyTakeShots);
+                futureVaccineInfo.addAppointment(appointment);
+            }
+
+            if (pastVaccineInfo != null) {
+                dto.addPastVaccine(pastVaccineInfo);
+            }
+
+            // If there is no future appointment schedules for the future.
+            if (futureVaccineInfo == null) {
+                // If some shots are still left, show in the vaccines due.
+                if (alreadyTakeShots < v.getNumberOfShots()) {
+                    futureVaccineInfo = new VaccineInfoDTO.VaccineInfo();
+                    futureVaccineInfo.setShotsDue(v.getNumberOfShots() - alreadyTakeShots);
+                    futureVaccineInfo.setVaccineName(v.getName());
+                    dto.addUpcomingVaccine(futureVaccineInfo);
+                }
+            } else {
+                dto.addUpcomingVaccine(futureVaccineInfo);
+            }
+        }
+
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping(value = "/vaccine", produces = {"application/json"})
