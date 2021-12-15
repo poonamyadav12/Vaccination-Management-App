@@ -16,7 +16,8 @@ const LandingPage = React.lazy(() =>
 );
 const Signup = React.lazy(() => import("./components/Signup/Signup"));
 const Login = React.lazy(() => import("./components/Login/Login"));
-const BookedAppointments = React.lazy(() => import("./components/BookedAppointments/BookedAppointments"))
+const BookedAppointments = React.lazy(() => import("./components/BookedAppointments/BookedAppointments"));
+const SystemReport = React.lazy(() => import("./components/Report/SystemReport/SystemReport"));
 
 const BASE_URL = "http://localhost:8080";
 axios.defaults.baseURL = BASE_URL;
@@ -41,7 +42,8 @@ function App() {
                     <Route path="/disease" element={<Disease/>}/>
                     <Route path="/vaccine" element={<Vaccine/>}/>
                     <Route path="/appointment" element={<Appointment/>}/>
-                    <Route path="/bookedappointments" element={<BookedAppointments/>}/>
+                    <Route path="/bookedappointments" element={<BookedAppointments />} />
+                    <Route path="/systemreport" element={<SystemReport />} />
                 </Routes>
             </Suspense>
         </div>
