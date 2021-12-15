@@ -48,11 +48,17 @@ const Navigationbar = () => {
         </Dropdown>
     </>;
 
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 365);
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() - 2);
     navLogin = (
         <>
             {user && <DateTimePicker
                 onChange={onDateChange}
                 value={time}
+                minDate={currentDate}
+                maxDate={maxDate}
             />}
             <Nav className="ml-auto">
                 {!user && (<Link
