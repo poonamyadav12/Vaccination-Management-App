@@ -19,13 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.TransactionRequiredException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-<<<<<<< Updated upstream
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-=======
->>>>>>> Stashed changes
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
