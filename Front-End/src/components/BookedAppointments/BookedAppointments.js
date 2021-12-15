@@ -187,17 +187,22 @@ const AppointmentItem = (props) => {
       })
       .then((response) => {
         if (response.status === 200) {
+          console.log("here");
           toast.success("Appointment Deleted Successfully.", {
             position: "top-left",
             closeOnClick: true,
             delay: 1,
+            autoClose:1500,
+            onClose:()=>setRender(!render)
           });
-          setRender(!render);
+        //   setRender(!render)
         } else {
           toast.error("Failed to delete appointment.", {
             position: "top-left",
             closeOnClick: true,
             delay: 1,
+            autoClose:2000,
+            onClose:()=>setRender(!render),
           });
         }
       });
@@ -257,10 +262,10 @@ const AppointmentItem = (props) => {
   const onDateChange = (date) => {
     setSelectedDate(date);
     mySlots = slots
-    ? slots.appointments.filter(
-        (a) => a.clinic.id === props.appointment.clinic.id
-      )
-    : [];
+      ? slots.appointments.filter(
+          (a) => a.clinic.id === props.appointment.clinic.id
+        )
+      : [];
   };
 
   const modal = props.type === "upcoming" && (
@@ -269,8 +274,20 @@ const AppointmentItem = (props) => {
         <Modal.Title>Edit appointment</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <DatePicker onChange={onDateChange} value={selectedDate}/> <br />
-        {mySlots.length>0?(<EditAppointment appointment={mySlots[0]} closeModal={closeEditMenu} render={render} setRender={setRender}/>):(<h4><br/>No slots at the current time.</h4>)}
+        <DatePicker onChange={onDateChange} value={selectedDate} /> <br />
+        {mySlots.length > 0 ? (
+          <EditAppointment
+            appointment={mySlots[0]}
+            closeModal={closeEditMenu}
+            render={render}
+            setRender={setRender}
+          />
+        ) : (
+          <h4>
+            <br />
+            No slots at the current time.
+          </h4>
+        )}
         {/* {console.log(mySlots)} */}
       </Modal.Body>
       <Modal.Footer>
@@ -283,6 +300,7 @@ const AppointmentItem = (props) => {
 
   return (
     <div>
+        <ToastContainer/>
       <ReactTooltip id="checkedIn" type="success">
         <span>Appointment honored</span>
       </ReactTooltip>
