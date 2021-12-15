@@ -163,4 +163,31 @@ public class AppointmentController {
         SendEmail.send(user.getEmail(), "Appointment checked-in", String.format("Hi %s,<br/> You appointment at %s on %s is checked-in. Please reach 5 minutes before the actual time to complete the documentation.", user.getFirstname(), appointment.getClinic().getName(), appointment.getTime()));
         return ResponseEntity.ok("Checked In");
     }
+
+    @GetMapping(value = "/clinicReport/{clinicName}/{fromDate}/{toDate}", produces = {"application/json"})
+    public ResponseEntity<?> getClinicReport(@PathVariable("clinicName") String clinicName, @PathVariable("fromDate") String fromDate, @PathVariable("toDate") String toDate, @RequestParam("time") String currentTime) {
+        List<Appointment> appointmentPerClinic = appointmentRepository.findAppointmentByClinicName(clinicName);
+        Map<String, Object> responseMap = new HashMap<>();
+        Date currentTimeDate = parseDateTime(currentTime);
+        Date from = parseDateTime(fromDate);
+        Date to = parseDateTime(toDate);
+        List<Appointment> appointmentsFiltered = appointmentPerClinic.stream().filter(appt -> appt.getTime().getTime() >= from.getTime() && appt.getTime().getTime() < to.getTime()).collect(Collectors.toList());
+        int noShow = 0;
+        float rate = 0;
+        for (Appointment appt : appointmentsFiltered) {
+            boolean checkinStatus = appt.isCheckInStatus();
+            if (!checkinStatus && appt.getTime().getTime() < currentTimeDate.getTime()) {
+                noShow++;
+            }
+        }
+        if (!appointmentsFiltered.isEmpty()) {
+            rate =(float) noShow / appointmentsFiltered.size();
+        }
+        responseMap.put("total", appointmentsFiltered.size());
+        responseMap.put("noShow", noShow);
+        responseMap.put("rate", rate);
+
+        return ResponseEntity.ok(responseMap);
+
+    }
 }
