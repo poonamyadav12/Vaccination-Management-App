@@ -124,7 +124,7 @@ public class AppointmentController {
         System.out.println(appointmentID);
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentID);
         if (appointmentOpt.isEmpty()) {
-            throw new IllegalStateException("Appointment ID doesn't exists " + appointmentID);
+            Error.badRequest(HttpStatus.BAD_REQUEST, "Appointment ID doesn't exists %s", appointmentID);
         }
 
         appointmentRepository.deleteById(appointmentID);
@@ -143,7 +143,7 @@ public class AppointmentController {
 
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentID);
         if (appointmentOpt.isEmpty()) {
-            throw new IllegalStateException("Appointment ID doesn't exists " + appointmentID);
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "Appointment ID doesn't exists " + appointmentID);
         }
         Date selectedDate = parseDateTime(updatedTime);
 
@@ -151,6 +151,7 @@ public class AppointmentController {
 
         Appointment appointment = appointmentOpt.get();
         appointment.setTime(selectedDate);
+        appointment.setCheckInStatus(false);
         appointmentRepository.save(appointment);
         User user = appointment.getUser();
         SendEmail.send(user.getEmail(), "Appointment Updated", String.format("Hi %s,<br/> Your appointment at %s on %s is updated.", user.getFirstname(), appointment.getClinic().getName(), appointment.getTime()));

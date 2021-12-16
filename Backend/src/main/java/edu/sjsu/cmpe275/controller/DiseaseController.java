@@ -1,8 +1,11 @@
 package edu.sjsu.cmpe275.controller;
 
+import edu.sjsu.cmpe275.common.Error;
 import edu.sjsu.cmpe275.model.Disease;
 import edu.sjsu.cmpe275.repository.DiseaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +28,14 @@ public class DiseaseController {
 
     @PostMapping(value = "/disease", produces = {"application/json"})
     @Transactional
-    public void registerDisease(@RequestBody Disease disease) {
+    public ResponseEntity<?> registerDisease(@RequestBody Disease disease) {
         Optional<Disease> diseaseOptional = diseaseRepository.findDiseaseByName(disease.getName());
 
         if (diseaseOptional.isPresent()) {
-            throw new IllegalStateException("Disease Already Exist In Database");
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "Disease Already Exist In Database");
         }
 
         diseaseRepository.save(disease);
+        return ResponseEntity.ok("Success");
     }
 }
