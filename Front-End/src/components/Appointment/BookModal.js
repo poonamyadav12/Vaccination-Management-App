@@ -80,14 +80,18 @@ export const BookModal = (props) => {
                 })}</h5>
                 <br/>
                 {(dueVaccines && dueVaccines.length === 0) && "No vaccine is due"}
-                {dueVaccines?.map(vacc => <>
-                    <InputGroup>
-                        <InputGroup.Checkbox
-                            defaultChecked={vaccines.some(v => v.vaccineId === vacc.vaccineId)}
-                            onChange={() => toggleVaccine(vacc)}/>
-                        &nbsp;<h5>{`${vacc.name}`}</h5>
-                    </InputGroup>
-                </>)}
+                {dueVaccines?.map(vacc => {
+                    const isChecked = vaccines.some(v => v.vaccineId === vacc.vaccineId);
+                    return <>
+                        <InputGroup>
+                            <InputGroup.Checkbox
+                                defaultChecked={isChecked}
+                                disabled={!isChecked && vaccines.length >= 4}
+                                onChange={() => toggleVaccine(vacc)}/>
+                            &nbsp;<h5>{`${vacc.name}`}</h5>
+                        </InputGroup>
+                    </>;
+                })}
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={props.closeModal}>
