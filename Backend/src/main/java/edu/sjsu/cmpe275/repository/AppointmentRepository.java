@@ -17,9 +17,4 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     @Query("SELECT s from Appointment s WHERE s.clinic.name = ?1")
     List<Appointment> findAppointmentByClinicName(String clinicName);
-  
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE appointment SET time = ?2 WHERE id = ?1", nativeQuery = true)
-    Optional<Integer> updateAppointment(Long appointmentId, Date updatedTime);
 }

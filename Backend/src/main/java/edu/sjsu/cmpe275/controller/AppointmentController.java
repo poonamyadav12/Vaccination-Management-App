@@ -145,13 +145,13 @@ public class AppointmentController {
         if (appointmentOpt.isEmpty()) {
             throw new IllegalStateException("Appointment ID doesn't exists " + appointmentID);
         }
-            Date selectedDate = parseDateTime(updatedTime);
+        Date selectedDate = parseDateTime(updatedTime);
 
         System.out.println(selectedDate);
 
-        Optional<Integer> status = appointmentRepository.updateAppointment(appointmentID, selectedDate);
-
         Appointment appointment = appointmentOpt.get();
+        appointment.setTime(selectedDate);
+        appointmentRepository.save(appointment);
         User user = appointment.getUser();
         SendEmail.send(user.getEmail(), "Appointment Updated", String.format("Hi %s,<br/> Your appointment at %s on %s is updated.", user.getFirstname(), appointment.getClinic().getName(), appointment.getTime()));
 
