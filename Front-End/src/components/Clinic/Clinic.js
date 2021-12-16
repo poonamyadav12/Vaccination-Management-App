@@ -143,18 +143,18 @@ const Clinic = () => {
                                             defaultValue={clinic.address.street} />
                                     </Form.Group>
                                     <Form.Group className="loginbox" controlId="formCity">
-                                        <Form.Label>Enter Your Street Details</Form.Label>
+                                        <Form.Label>Enter Your City</Form.Label>
                                         <Form.Control type="text" name="city" placeholder="Enter Your City"
                                             onChange={onChangeCity} required
                                             defaultValue={clinic.address.city} />
                                     </Form.Group>
                                     <Form.Group className="loginbox" controlId="formState">
-                                        <Form.Label>Enter Your Street Details</Form.Label>
+                                        <Form.Label>Enter Your State</Form.Label>
                                         <Form.Control type="text" name="state" placeholder="Enter Your State"
                                             onChange={onChangeState} required defaultValue={clinic.address.state} />
                                     </Form.Group>
                                     <Form.Group className="loginbox" controlId="formZipCode">
-                                        <Form.Label>Enter Your Street Details</Form.Label>
+                                        <Form.Label>Enter Your Zip Code</Form.Label>
                                         <Form.Control type="text" name="zipcode" placeholder="Enter Your Zip Code"
                                             onChange={onChangeZipCode} required defaultValue={clinic.address.zipCode} />
                                     </Form.Group>
