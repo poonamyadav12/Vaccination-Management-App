@@ -1,15 +1,28 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {CheckinAppointments, CreateAppointments, GetAppointments, GetClinicReport, GetUserReport} from "../services";
+import {
+    CheckinAppointments,
+    CreateAppointments, DeleteAppointments,
+    GetAppointments,
+    GetClinicReport,
+    GetUserReport,
+    UpdateAppointments
+} from "../services";
 
 const appointmentSlice = createSlice({
     name: 'appointmentSlice',
     initialState: {},
-    reducers : {
+    reducers: {
         setCheckinSuccess(state, action) {
             state.checkinSuccess = action.payload;
         },
-        setCreateAppointmentSuccess(state,action){
+        setCreateAppointmentSuccess(state, action) {
             state.createAppointmentSuccess = action.payload;
+        },
+        setUpdateAppointmentSuccess(state, action) {
+            state.updateAppointmentSuccess = action.payload;
+        },
+        setDeleteAppointmentSuccess(state, action) {
+            state.deleteAppointmentSuccess = action.payload;
         },
         setSystemReportSuccess(state, action) {
             state.isSystemReportSuccess = action.payload;
@@ -24,6 +37,20 @@ const appointmentSlice = createSlice({
         },
         [CreateAppointments.rejected]: (state, action) => {
             state.createAppointmentSuccess = false;
+            state.error = action.payload;
+        },
+        [UpdateAppointments.fulfilled]: (state, action) => {
+            state.updateAppointmentSuccess = true;
+        },
+        [UpdateAppointments.rejected]: (state, action) => {
+            state.updateAppointmentSuccess = false;
+            state.error = action.payload;
+        },
+        [DeleteAppointments.fulfilled]: (state, action) => {
+            state.deleteAppointmentSuccess = true;
+        },
+        [DeleteAppointments.rejected]: (state, action) => {
+            state.deleteAppointmentSuccess = false;
             state.error = action.payload;
         },
         [GetAppointments.fulfilled]: (state, action) => {
