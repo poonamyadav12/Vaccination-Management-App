@@ -99,8 +99,8 @@ public class AppointmentController {
         if (userOpt.isEmpty()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "User is not available");
         }
-        Optional<Vaccine> vaccineOpt = vaccineRepository.findById(vaccineID);
-        if (vaccineOpt.isEmpty()) {
+        List<Vaccine> vaccines = vaccineRepository.findAllById(Arrays.asList(vaccineID.split(",")));
+        if (vaccines.isEmpty()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "Vaccine is not available");
         }
         Optional<Clinic> clinicOpt = clinicRepository.findById(clinicID);
@@ -110,7 +110,7 @@ public class AppointmentController {
         Date bookingDateTime = parseDateTime(bookingTime);
 
         Appointment appointment = new Appointment(bookingDateTime, userOpt.get(), clinicOpt.get());
-        appointment.addVaccine(vaccineOpt.get());
+        appointment.setVaccines(vaccines);
         appointmentRepository.save(appointment);
         User user = userOpt.get();
         SendEmail.send(user.getEmail(), "Appointment booked", String.format("Hi %s,<br/> You appointment is booked at %s on %s. Please checkin before 24 hours.", user.getFirstname(), appointment.getClinic().getName(), appointment.getTime()));

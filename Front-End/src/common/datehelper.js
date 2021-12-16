@@ -15,9 +15,9 @@ export function getTime(date) {
 }
 
 export function toPstDate(date) {
-    return date.toLocaleDateString("en-US", {timeZone: "America/Los_Angeles"});
+    return date?.toLocaleDateString("en-US", {timeZone: "America/Los_Angeles"});
 }
 
 export function toPstTime(date) {
-    return date.toLocaleTimeString("en-US", {timeZone: "America/Los_Angeles"});
+    return date?.toLocaleTimeString("en-US", {timeZone: "America/Los_Angeles"});
 }
