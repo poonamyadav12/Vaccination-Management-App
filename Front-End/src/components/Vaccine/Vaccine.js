@@ -77,7 +77,7 @@ const Vaccine = () => {
     } 
     else {
       axios
-        .post(`http://localhost:8080/vaccine`, vaccine)
+        .post(`/vaccine`, vaccine)
         .then((data) => {
           if (data.status == 200) {
             toast.success("Vaccine added successfully", {
@@ -113,7 +113,7 @@ const Vaccine = () => {
 
   const getAllDiseases = async () => {
     axios
-      .get(`http://localhost:8080/disease`)
+      .get(`/disease`)
       .then((data) => {
         setDiseases(data.data);
       })
