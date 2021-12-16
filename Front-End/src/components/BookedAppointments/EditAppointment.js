@@ -34,13 +34,14 @@ export const EditAppointment = (props) => {
                 closeOnClick: true,
                 delay: 1
             });
+            dispatch(appointmentSliceActions.setUpdateAppointmentSuccess(false));
             dispatch(GetAppointments(user.email));
             props.onHide();
         }
     }, [updateAppointmentSuccess])
 
     useEffect(() => () => {
-        appointmentSliceActions.setUpdateAppointmentSuccess(false);
+        dispatch(appointmentSliceActions.setUpdateAppointmentSuccess(false));
     }, [])
 
     useEffect(() => {
