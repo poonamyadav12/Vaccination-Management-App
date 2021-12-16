@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Col, Container, Row, ButtonGroup, Modal, Card} from "react-bootstrap";
-import DatePicker from "react-date-picker";
+import {Col, Container, Row, ButtonGroup, Modal} from "react-bootstrap";
 import Navigationbar from "../Navigationbar/Navigationbar";
 import {Descriptions, Radio, Button} from "antd";
 import "./BookedAppointments.css";
@@ -134,7 +133,8 @@ const AppointmentItem = (props) => {
 
     const user = useSelector((state) => state.userSlice.user);
     const time = useSelector((state) => state.timeSlice.time);
-    const deleteAppointmentSuccess = useSelector((state) => state.appointmentSlice.deleteAppointmentSuccess);
+
+    const [deleteOpen, setDeleteOpen] = useState(false);
 
     const checkinSuccess = useSelector(
         (state) => state.appointmentSlice.checkinSuccess
@@ -230,7 +230,8 @@ const AppointmentItem = (props) => {
     const menu = props.type === "upcoming" && (
         <div style={{marginTop: "2vh"}}>
             <ButtonGroup>
-                <Button style={{marginRight: "30px"}} onClick={deleteFunc} variant="danger" className="btn-danger">
+                <Button style={{marginRight: "30px"}} onClick={() => setDeleteOpen(true)} variant="danger"
+                        className="btn-danger">
                     Delete
                 </Button>
                 <Button onClick={editFunc} variant="primary" className="btn-primary">
@@ -280,6 +281,22 @@ const AppointmentItem = (props) => {
                         );
                     })}
                     {menu}
+                    <Modal show={deleteOpen} onHide={() => setDeleteOpen(false)}>
+                        <Modal.Header deleteButton>
+                            <Modal.Title>Delete appointment</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <h5>Are you sure you want to delete this appointment?</h5>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button className="btn-success" onClick={() => setDeleteOpen(false)}>
+                                No
+                            </Button>
+                            <Button className="btn-danger" onClick={deleteFunc}>
+                                Yes
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
                     <EditAppointment onHide={closeEditMenu} show={editMenuOpen} appointmentID={props.appointment.id}
                                      clinic={props.appointment.clinic} oldTime={new Date(props.appointment.time)}/>
                 </Descriptions.Item>
