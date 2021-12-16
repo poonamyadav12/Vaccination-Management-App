@@ -230,7 +230,7 @@ const AppointmentItem = (props) => {
     const menu = props.type === "upcoming" && (
         <div style={{marginTop: "2vh"}}>
             <ButtonGroup>
-                <Button onClick={deleteFunc} variant="danger" className="btn-danger">
+                <Button style={{marginRight: "30px"}} onClick={deleteFunc} variant="danger" className="btn-danger">
                     Delete
                 </Button>
                 <Button onClick={editFunc} variant="primary" className="btn-primary">
