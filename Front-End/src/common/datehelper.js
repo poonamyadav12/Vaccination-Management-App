@@ -7,11 +7,11 @@ export function formatMMddYYYY(date) {
 }
 
 export function getDate(date) {
-    return date.toISOString().substr(0, 10);
+    return date?.toISOString()?.substr(0, 10);
 }
 
 export function getTime(date) {
-    return date.toISOString().substr(12, 5);
+    return date?.toISOString()?.substr(12, 5);
 }
 
 export function toPstDate(date) {
