@@ -145,17 +145,11 @@ public class AppointmentController {
         if (appointmentOpt.isEmpty()) {
             throw new IllegalStateException("Appointment ID doesn't exists " + appointmentID);
         }
+            Date selectedDate = parseDateTime(updatedTime);
 
-        Date updateTime1 = null;
-        try {
-            updateTime1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(updatedTime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        System.out.println(selectedDate);
 
-        System.out.println(updateTime1);
-
-        Optional<Integer> status = appointmentRepository.updateAppointment(appointmentID, updateTime1);
+        Optional<Integer> status = appointmentRepository.updateAppointment(appointmentID, selectedDate);
 
         Appointment appointment = appointmentOpt.get();
         User user = appointment.getUser();

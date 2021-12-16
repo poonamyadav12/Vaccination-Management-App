@@ -156,7 +156,7 @@ const AppointmentItem = (props) => {
   }, [checkinSuccess]);
 
   useEffect(() => {
-    dispatch(GetSlots(getDate(selectedDate)));
+    dispatch(GetSlots(`${user.email}/${getDate(selectedDate)}`));
   }, [selectedDate]);
 
   const checkInFunc = (e) => {
@@ -168,7 +168,7 @@ const AppointmentItem = (props) => {
   const [editMenu, setEditMenu] = useState(false);
   const editFunc = (e) => {
     console.log("Attempted to edit.");
-    console.log(mySlots);
+    console.log(props);
     setEditMenu(true);
   };
 
@@ -281,6 +281,7 @@ const AppointmentItem = (props) => {
             closeModal={closeEditMenu}
             render={render}
             setRender={setRender}
+            appointmentID={props.appointment.id}
           />
         ) : (
           <h4>
