@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {CheckinAppointments, CreateAppointments, GetAppointments} from "../services";
+import {CheckinAppointments, CreateAppointments, GetAppointments, GetClinicReport, GetUserReport} from "../services";
 
 const appointmentSlice = createSlice({
     name: 'appointmentSlice',
@@ -10,6 +10,12 @@ const appointmentSlice = createSlice({
         },
         setCreateAppointmentSuccess(state,action){
             state.createAppointmentSuccess = action.payload;
+        },
+        setSystemReportSuccess(state, action) {
+            state.isSystemReportSuccess = action.payload;
+        },
+        setSystemReportError(state, action) {
+            state.isSystemReportError = action.payload;
         }
     },
     extraReducers: {
@@ -35,6 +41,13 @@ const appointmentSlice = createSlice({
         [CheckinAppointments.rejected]: (state, action) => {
             state.error = action.payload;
             state.checkinSuccess = false;
+        },
+        [GetClinicReport.fulfilled]: (state, action) => {
+            state.systemReport = action.payload;
+            state.isSystemReportSuccess = true;
+        },
+        [GetClinicReport.rejected]: (state, action) => {
+            state.isSystemReportError = action.payload;
         },
     }
 })

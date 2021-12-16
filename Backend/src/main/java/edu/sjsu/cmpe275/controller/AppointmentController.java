@@ -206,7 +206,7 @@ public class AppointmentController {
         Date to = parseDateTime(toDate);
         List<Appointment> appointmentsFiltered = appointmentPerClinic.stream().filter(appt -> appt.getTime().getTime() >= from.getTime() && appt.getTime().getTime() < to.getTime()).collect(Collectors.toList());
         int noShow = 0;
-        float rate = 0;
+        String rate = "0";
         for (Appointment appt : appointmentsFiltered) {
             boolean checkinStatus = appt.isCheckInStatus();
             if (!checkinStatus && appt.getTime().getTime() < currentTimeDate.getTime()) {
@@ -214,7 +214,7 @@ public class AppointmentController {
             }
         }
         if (!appointmentsFiltered.isEmpty()) {
-            rate =(float) noShow / appointmentsFiltered.size();
+            rate = String.format("%.2f", (double) noShow / appointmentsFiltered.size());
         }
         responseMap.put("total", appointmentsFiltered.size());
         responseMap.put("noShow", noShow);

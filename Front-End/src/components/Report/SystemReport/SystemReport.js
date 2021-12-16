@@ -1,51 +1,69 @@
 import Navigationbar from "../../Navigationbar/Navigationbar"
-import { Container, Row, Col, Figure, Card } from 'react-bootstrap';
-import { DatePicker, Space, Select, Button } from 'antd';
+import {Container, Row, Col, Figure, Card} from 'react-bootstrap';
+import {DatePicker, Space, Select, Button} from 'antd';
 import 'antd/dist/antd.css';
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import ReportComponent from '../ReportComponent';
+import {useDispatch, useSelector} from "react-redux";
+import {GetClinic, GetClinicReport, GetSlots, GetUserReport} from "../../../services";
+import * as moment from "moment";
 
-const { Option } = Select;
-const { RangePicker } = DatePicker;
+const {Option} = Select;
+const {RangePicker} = DatePicker;
 
 const SystemReport = () => {
-    const [clinicName, setClinicName] = useState("");
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 365);
+
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() - 365);
+
+    const initialStartMoment = new moment();
+    initialStartMoment.subtract(30, "d");
+
+    const initialEndMoment = new moment();
+
+    const [moments, setMoments] = useState([initialStartMoment, initialEndMoment]);
+
+    const [clinicName, setClinicName] = useState("Select Clinic");
+
+    const dispatch = useDispatch();
+
+    const systemReport = useSelector(state => state.appointmentSlice.systemReport);
+
+    const clinics = useSelector(state => state.clinicSlice.clinics);
 
     const onClinicSelect = (e) => {
         setClinicName(e);
     }
 
-    const onDateChange = (e) => {
-        const dates = e;
-        setStartDate(dates[0]._d);
-        setEndDate(dates[1]._d);
+    const onDateChange = (m) => {
+        setMoments(m);
     }
 
     const onGenerateReport = () => {
-        const data = {
-            clinicName,
-            startDate,
-            endDate
-        }
-        console.log(data);
+        dispatch(GetClinicReport(`${encodeURIComponent(clinicName)}/${moments[0].toDate().toISOString()}/${moments[1].toDate().toISOString()}`));
     }
 
-    const maxDate = new Date();
-    maxDate.setDate(maxDate.getDate() + 365);
+    useEffect(() => {
+        //Reload on new user report.
+        dispatch(GetClinic(""))
+    }, []);
 
-    const currentDate = new Date();
-    currentDate.setHours(currentDate.getHours() - 2);
+
+    useEffect(() => {
+        //Reload on new user report.
+    }, [systemReport]);
 
     return (
         <div>
-            <Navigationbar />
+            <Navigationbar/>
             <div className="container">
                 <Container>
                     <div>
                         <Row>
-                            <Col style={{ flex: "0 1 30%" }}>
+                            <Col style={{flex: "0 1 30%"}}>
                                 <div id="login-image">
                                     <Figure.Image
                                         src={`${window.location.origin}/systemreport.svg`}
@@ -53,30 +71,36 @@ const SystemReport = () => {
                                 </div>
                             </Col>
                             <Col>
-                                <h1 style={{ marginTop: "30px", marginRight: "70px" }}>Generate System Report</h1>
-                                <br />
+                                <h1 style={{marginTop: "30px", marginRight: "70px"}}>Generate System Report</h1>
+                                <br/>
                                 <Card className={"border-0"}>
                                     <Row>
                                         <Col>
-                                            <Select defaultValue="Select Clinic" style={{ textAlign: "left", paddingRight: "5px" }} onSelect={onClinicSelect}>
+                                            <Select defaultValue={clinicName}
+                                                    style={{textAlign: "left", paddingRight: "5px"}}
+                                                    onSelect={onClinicSelect}>
                                                 <Option value="Select Clinic" disabled>Select Clinic</Option>
-                                                <Option value="Sutter Health">Sutter Health</Option>
-                                                <Option value="Washington Health">Washington Health</Option>
+                                                {clinics?.map(c => <Option value={c.name}>{c.name}</Option>)}
                                             </Select>
                                         </Col>
                                         <Col>
                                             <Space direction="vertical" size={12}>
-                                                <RangePicker defaultPickerValue={currentDate} disabledDate={d => !d || d.isBefore(currentDate) || d.isAfter(maxDate)} onChange={onDateChange} />
+                                                <RangePicker
+                                                    defaultValue={moments}
+                                                    disabledDate={d => !d || d.isBefore(minDate) || d.isAfter(maxDate)}
+                                                    onChange={onDateChange}/>
                                             </Space>
                                         </Col>
                                         <Col>
-                                            <Button style={{backgroundColor: "#343971", color: "rgb(238, 238, 238)"}} onClick={onGenerateReport}>Generate</Button>
+                                            <Button style={{backgroundColor: "#343971", color: "rgb(238, 238, 238)"}}
+                                                    hidden={clinicName === "Select Clinic"}
+                                                    onClick={onGenerateReport}>Generate</Button>
                                         </Col>
                                     </Row>
-                                    <br />
+                                    <br/>
                                 </Card>
-                                <Row style={{marginTop:"20px"}}>
-                                    <ReportComponent />
+                                <Row style={{marginTop: "20px"}}>
+                                    <ReportComponent report={systemReport}/>
                                 </Row>
                             </Col>
                         </Row>
