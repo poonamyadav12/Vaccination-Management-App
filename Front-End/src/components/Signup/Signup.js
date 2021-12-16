@@ -188,6 +188,7 @@ const Signup = () => {
                                             <option hidden value="Choose Your Gender">Choose Gender</option>
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
                                         </Form.Control>
                                     </Form.Group>
                                     <Form.Group className="signupbox" controlId="formEmail">

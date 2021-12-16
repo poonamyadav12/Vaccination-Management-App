@@ -20,6 +20,7 @@ import static edu.sjsu.cmpe275.common.DateUtil.parseDateTime;
 public class UserController {
     @Autowired
     UserRepository userRepository;
+
     //Fetch user details using email
     @GetMapping(value = "/user/{email}", produces = {"application/json"})
     public ResponseEntity<?> getUserByEmail(@PathVariable("email") String email) {
@@ -59,7 +60,7 @@ public class UserController {
         Date to = parseDateTime(toDate);
         List<Appointment> appointmentsFiltered = appointments.stream().filter(appt -> appt.getTime().getTime() >= from.getTime() && appt.getTime().getTime() < to.getTime()).collect(Collectors.toList());
         int noShow = 0;
-        float rate = 0;
+        String rate = "0";
         for (Appointment appt : appointmentsFiltered) {
             boolean checkinStatus = appt.isCheckInStatus();
             if (!checkinStatus && appt.getTime().getTime() < currentTimeDate.getTime()) {
@@ -67,7 +68,7 @@ public class UserController {
             }
         }
         if (!appointmentsFiltered.isEmpty()) {
-            rate =(float) noShow / appointmentsFiltered.size();
+            rate = String.format("%.2f", (double) noShow / appointmentsFiltered.size());
         }
         responseMap.put("total", appointmentsFiltered.size());
         responseMap.put("noShow", noShow);

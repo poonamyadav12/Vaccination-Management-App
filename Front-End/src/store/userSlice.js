@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit'
-import {CreateUser, GetUser} from "../services";
+import {CreateUser, GetUser, GetUserReport} from "../services";
 
 
 let user = JSON.parse(localStorage.getItem('user'));
@@ -26,6 +26,12 @@ const userSlice = createSlice({
             state.user = null;
             localStorage.setItem('user', null);
             state.isSuccess = false;
+        },
+        setUserReportSuccess(state, action) {
+            state.isUserReportSuccess = action.payload;
+        },
+        setUserReportError(state, action) {
+            state.isUserReportError = action.payload;
         }
     },
     extraReducers: {
@@ -47,6 +53,14 @@ const userSlice = createSlice({
             state.error = action.payload;
             localStorage.setItem('user', null);
         },
+        [GetUserReport.fulfilled]: (state, action) => {
+            state.userReport = action.payload;
+            state.isUserReportSuccess = true;
+        },
+        [GetUserReport.rejected]: (state, action) => {
+            state.isUserReportError = action.payload;
+        },
+
     }
 
 })
