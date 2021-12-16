@@ -40,21 +40,34 @@ public class VaccineController {
     }
 
     @GetMapping(value = "/vaccine/due/{emailId}", produces = {"application/json"})
-    public ResponseEntity<?> getDueVaccine(@PathVariable String emailId, @RequestParam("bookingDateTime") String bookingDateTimeStr) {
+    public ResponseEntity<?> getDueVaccine(@PathVariable String emailId, @RequestParam("bookingDateTime") String bookingDateTimeStr, @RequestParam("time") String currentTimeStr) {
         Optional<User> userOpt = userRepository.findUserByEmail(emailId);
         if (userOpt.isEmpty()) {
             return Error.badRequest(HttpStatus.BAD_REQUEST, "Invalid user ID ", emailId);
         }
         User user = userOpt.get();
         List<Appointment> appointments = user.getAppointments();
+        Date currentDateTime = parseDateTime(currentTimeStr);
         Map<String, Long> alreadyTakenVaccines = appointments
-                .stream().flatMap(appt -> appt.getVaccines().stream())
+                .stream()
+                .filter(appt -> {
+                    // If appointment is in past and no show
+                    if (appt.getTime().getTime() < currentDateTime.getTime()) {
+                        return appt.isCheckInStatus();
+                    }
+                    return true;
+                })
+                .flatMap(appt -> appt.getVaccines().stream())
                 .collect(Collectors.groupingBy(Vaccine::getVaccineId, Collectors.counting()));
 
         Map<String, Date> maxAppointmentTime = new HashMap<>();
         for (Appointment appointment : appointments) {
             for (Vaccine v : appointment.getVaccines()) {
                 maxAppointmentTime.compute(v.getVaccineId(), (key, val) -> {
+                    // If appointment is in past and not checked in, don't consider it.
+                    if (appointment.getTime().getTime() < currentDateTime.getTime() && !appointment.isCheckInStatus()) {
+                        return val == null ? new Date(0) : val;
+                    }
                     if (val == null) return appointment.getTime();
                     if (val.getTime() > appointment.getTime().getTime()) {
                         return val;
