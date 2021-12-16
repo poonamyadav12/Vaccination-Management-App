@@ -124,7 +124,7 @@ public class AppointmentController {
         System.out.println(appointmentID);
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentID);
         if (appointmentOpt.isEmpty()) {
-            Error.badRequest(HttpStatus.BAD_REQUEST, "Appointment ID doesn't exists %s", appointmentID);
+            return Error.badRequest(HttpStatus.BAD_REQUEST, "Appointment ID doesn't exists %s", appointmentID);
         }
 
         appointmentRepository.deleteById(appointmentID);
