@@ -7,6 +7,7 @@ import ReportComponent from '../ReportComponent';
 import {useDispatch, useSelector} from "react-redux";
 import {GetUserReport} from "../../../services";
 import * as moment from 'moment';
+import {Navigate} from "react-router-dom";
 
 const {RangePicker} = DatePicker;
 
@@ -50,6 +51,7 @@ const PatientReport = () => {
 
     return (
         <div>
+            {!user && <Navigate to='/' />}
             <Navigationbar/>
             <div className="container">
                 <Container>

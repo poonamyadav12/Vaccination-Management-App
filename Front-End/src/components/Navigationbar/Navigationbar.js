@@ -44,6 +44,7 @@ const Navigationbar = () => {
                 <Dropdown.Item href="/clinic">New Clinic</Dropdown.Item>
                 <Dropdown.Item href="/disease">New Disease</Dropdown.Item>
                 <Dropdown.Item href="/vaccine">New Vaccine</Dropdown.Item>
+                <Dropdown.Item href="/systemreport">System Report</Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
     </>;
@@ -83,6 +84,14 @@ const Navigationbar = () => {
                                 pathname: '/bookedAppointments',
                             }}
                         ><Button className="mr-sm-2 navbarbuttons">Appointments
+                        </Button>
+                        </Link>
+                        <Link
+                            id="appointments"
+                            to={{
+                                pathname: '/patientreport',
+                            }}
+                        ><Button className="mr-sm-2 navbarbuttons">Patient Report
                         </Button>
                         </Link>
                         <Link

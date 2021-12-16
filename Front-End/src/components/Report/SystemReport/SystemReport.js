@@ -7,11 +7,14 @@ import ReportComponent from '../ReportComponent';
 import {useDispatch, useSelector} from "react-redux";
 import {GetClinic, GetClinicReport, GetSlots, GetUserReport} from "../../../services";
 import * as moment from "moment";
+import {Navigate} from "react-router-dom";
 
 const {Option} = Select;
 const {RangePicker} = DatePicker;
 
 const SystemReport = () => {
+
+    const user = useSelector(state => state.userSlice.user);
 
     const maxDate = new Date();
     maxDate.setDate(maxDate.getDate() + 365);
@@ -58,6 +61,7 @@ const SystemReport = () => {
 
     return (
         <div>
+            {!user && <Navigate to='/' />}
             <Navigationbar/>
             <div className="container">
                 <Container>
